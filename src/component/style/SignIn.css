@@ -1,0 +1,11 @@
+.remember-me-checkbox {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.forgot {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
