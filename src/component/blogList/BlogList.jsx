@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PaginationList from "./PaginationList";
+import PaginationList from "../pagination/PaginationList";
 import { Link } from "react-router-dom";
 import { format } from "date-fns"; 
-import './style/BlogList.css'
+import './BlogList.css'
 
 const BlogList = () => {
     const [currentPage, setCurrentPage] = useState(1);
