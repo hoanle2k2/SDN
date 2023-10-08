@@ -4,6 +4,9 @@ import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
+// import EditBlog from "./component/editBlog/EditBlog";
+
+import EditBlog from "./component/editBlog/EditBlog";
 
 function App() {
   return (
@@ -13,6 +16,8 @@ function App() {
         <Route path="/register" element={<SignUp />} />
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/blogl" element={<BlogList />} />
+        <Route path="/edit" element={<EditBlog />} />
+
       </Routes>
     </div>
   );
