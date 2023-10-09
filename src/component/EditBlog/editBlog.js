@@ -40,12 +40,12 @@ const EditBlog = () => {
                                                         className="form-control form-control-lg"
                                                     />
                                                 </div>
-                                        
+
                                             <button className='btn btn-info' type="button" >
                                                 Add Tag
                                             </button>
                                         </div>
-                                    
+
                                 </FieldArray>
                             </div>
                             <div className="d-flex justify-content-end">

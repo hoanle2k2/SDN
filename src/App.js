@@ -5,7 +5,6 @@ import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
 // import EditBlog from "./component/editBlog/EditBlog";
-
 import EditBlog from "./component/editBlog/EditBlog";
 
 function App() {
