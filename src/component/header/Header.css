@@ -1,0 +1,57 @@
+.guest-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+    z-index: 1000;
+}
+
+.logo img {
+    max-height: 50px;
+}
+
+.user-actions a {
+    margin-left: 10px;
+}
+
+.search-bar input {
+    padding: 6px;
+    border: 1px solid #D6D6D7; 
+}
+
+.search-bar input:focus {
+    outline: none; 
+    border: 1px solid #007bff; 
+}
+
+
+.search-bar button {
+    padding: 7px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+  }
+  
+  .user-profile img {
+    max-height: 50px;
+    border-radius: 50%; /* Bo tròn hình ảnh avatar */
+    margin-right: 10px; /* Khoảng cách giữa hình ảnh và tên */
+  }
+  
+  .user-profile span {
+    white-space: nowrap; /* Ngăn chặn tên tài khoản bị ngắt dòng */
+  }
+  
