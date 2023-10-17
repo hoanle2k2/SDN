@@ -74,7 +74,7 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Đăng Nhập
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
@@ -82,7 +82,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -92,7 +92,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Mật khẩu"
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -100,7 +100,7 @@ export default function SignInSide() {
               <FormControlLabel
                 className='remember-me-checkbox'
                 control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+                label="Nhớ mật khẩu"
               />
               <Button
                 type="submit"
@@ -108,17 +108,17 @@ export default function SignInSide() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Đăng Nhập
               </Button>
               <Grid container>
                 <Grid item xs>
                   <Link to="/forgot" variant="body2" className='forgot'>
-                    Forgot password?
+                    Quên mật khẩu?
                   </Link>
                 </Grid>
                 <Grid item>
                   <Link to="/register" variant="body2">
-                    Don't have an account? Sign Up
+                    Bạn chưa có tài khoản? Đăng ký
                   </Link>
                 </Grid>
               </Grid>

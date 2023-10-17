@@ -1,0 +1,55 @@
+/* BlogPublish Styles */
+.blog-publish {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.blog-publish h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.blog-publish ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.blog-publish li {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.blog-publish a {
+  text-decoration: none;
+  color: #007bff; /* Màu liên kết */
+  transition: color 0.3s;
+}
+
+.blog-publish a:hover {
+  color: #0056b3; /* Màu liên kết khi hover */
+}
+
+/* Reported Blogs Styles */
+.reported-blogs {
+  background-color: #ff9999; /* Màu nền của phần Reported Blogs */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.reported-blogs h2 {
+  color: #d9534f; /* Màu tiêu đề của phần Reported Blogs */
+}
+
+/* Blog Item Styles */
+.blog-item {
+  background-color: #f9f9f9; /* Màu nền của mỗi mục blog */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-item:hover {
+  background-color: #e0e0e0; /* Màu nền khi hover mục blog */
+}

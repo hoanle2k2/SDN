@@ -1,0 +1,113 @@
+/* PublishDetail.css */
+
+.container-fluid {
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.blog-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.author-name p {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.blog-meta {
+  text-align: right;
+}
+
+.blog-meta p {
+  font-size: 14px;
+  color: #777;
+}
+
+.blog__content {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.blog__title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.blog__content p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.blog__action {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.fa {
+  margin-right: 10px;
+  color: #333;
+  cursor: pointer;
+}
+
+.fa:hover {
+  color: #007bff;
+}
+
+.blog-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Style for the "Publish" and "Reject" buttons */
+.publish-button {
+  background-color: #4caf50;
+  /* Adjust the background color as desired */
+  color: #fff;
+  /* Text color */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+.reject-button {
+  background-color: #f44336;
+  /* Adjust the background color as desired */
+  color: #fff;
+  /* Text color */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Add margin to separate the buttons */
+.publish-button {
+  margin-right: 10px;
+}
+
+/* Hover effect */
+.publish-button:hover,
+.reject-button:hover {
+  opacity: 0.8;
+}
