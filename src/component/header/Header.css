@@ -1,0 +1,131 @@
+.header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+    z-index: 1000;
+}
+
+.logo img {
+    max-height: 50px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+
+}
+
+.user-actions a {
+    text-decoration: none;
+    margin-right: 10px;
+    color: black;
+}
+
+
+.search-bar input {
+    padding: 6px;
+    border: 1px solid #D6D6D7;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border: 1px solid #007bff;
+}
+
+
+.search-bar button {
+    padding: 7px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+
+}
+
+.user-profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.user-profile span {
+    white-space: nowrap;
+}
+
+.narbar {
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: 10px;
+    margin-top: 3px;
+    transition: color 0.3s;
+}
+
+
+.narbar:hover {
+    color: #0056b3;
+}
+
+
+
+
+.profile-list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: rgb(185, 230, 231);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profile-list>div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+
+
+.user-actions {
+    position: relative;
+}
+
+span {
+    margin-right: 10px;
+}
+
+.narbar-list div{ 
+    margin-bottom: 10px;
+}
+
+
+.narbar-list div:hover { 
+    background-color: rgb(112, 237, 239);
+
+}
+
+a:hover{
+    color: rgb(112, 237, 239);
+}
+
+a{
+    text-decoration: none;
+}

@@ -1,5 +1,3 @@
-// ForgotPassword.js
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
@@ -56,7 +54,7 @@ export default function ForgotPassword() {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Forgot Password
+                            Quên Mật Khẩu
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                             <TextField
@@ -64,18 +62,18 @@ export default function ForgotPassword() {
                                 required
                                 fullWidth
                                 id="email"
-                                label="Email Address"
+                                label="Email"
                                 name="email"
                                 autoComplete="email"
                                 autoFocus
                             />
                             <Button type="submit" fullWidth variant="contained" color="primary" sx={{ marginBottom: 2 }}>
-                                SEND RESET PASSWORD
+                                GỬI ĐẶT LẠI MẬT KHẨU
                             </Button>
                             <Grid container>
                                 <Grid item xs>
                                     <Link to="/login" variant="body2" >
-                                        Back to Sign In
+                                        Quay lại Đăng nhập
                                     </Link>
                                 </Grid>
                             </Grid>
