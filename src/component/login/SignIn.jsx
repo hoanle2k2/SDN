@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,7 +13,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './SignIn.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 // function Copyright(props) {
@@ -33,19 +35,70 @@ import { Link } from 'react-router-dom';
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(null);
+  const accesstoken = (localStorage.getItem("accessToken"));
+  const [errors, setErrors] = useState([]);
+
+  useEffect(() => {
+    if (accesstoken) {
+      navigate('/')
+    }
+  }, [accesstoken, navigate])
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const form = new FormData(event.currentTarget);
+    
+
+    const userData = {
+      email: form.get('email'),
+      password: form.get('password'),
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/accounts/login', userData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        const token = data.data.token;
+        const role = data.data.Role;
+        const name = data.data.usename;
+
+        localStorage.setItem('accessToken', token);
+        localStorage.setItem('Role', role);
+        localStorage.setItem('name', name);
+
+        setUserRole(role);
+
+        navigate('/');
+      } else {
+        setErrors('Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      if (error.response) {
+        const errors = error.response.data.errors;
+        console.log(errors);
+        // Render errors
+        setErrors(errors);
+      }
+    }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
+        {userRole && (
+          <Typography variant="body2">
+            Your role: {userRole}
+          </Typography>
+        )}
         <Grid
           item
           xs={false}
@@ -76,6 +129,15 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Đăng Nhập
             </Typography>
+            {errors.length > 0 && (
+              <div className="error-message">
+                {errors.map((errorObj, index) => (
+                  <div key={index} className="error-item">
+                    <p>{errorObj.msg}</p>
+                  </div>
+                ))}
+              </div>
+            )}
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
                 margin="normal"

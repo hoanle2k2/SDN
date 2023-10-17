@@ -1,15 +1,12 @@
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
-import Header from './component/header/Header';
-import Footer from "./component/footer/Footer";
-import BlogPublish from "./component/blogPublish/BlogPublish";
-import BlogPublishDetail from "./component/blogPublish/BlogPublishDetail";
-import './App.css'
-import BlogReport from "./component/blogPublish/BlogReport";
-
+import EditBlog from "./component/editBlog/EditBlog";
+import HomePage from "./component/home/HomePage";
+import Header from "./component/header/Header";
 
 function App() {
   const location = useLocation();
@@ -20,19 +17,19 @@ function App() {
       <div className="app-blog">
         {HideHeaderAndFooter && <Header />}
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<SignInSide />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
-          <Route path="/bloglist" element={<BlogList />} />
-          <Route path="/blogpublish" element={<BlogPublish />} />
-          <Route path="/articleDetail" element={<BlogPublishDetail />} />
-          <Route path="/reportDetail" element={<BlogReport />} />
+          <Route path="/blogl" element={<BlogList />} />
+          <Route path="/edit" element={<EditBlog />} />
         </Routes>
 
-        {HideHeaderAndFooter && <Footer />}
+        {/* {HideHeaderAndFooter && <Footer />} */}
       </div>
     </div>
   );
 }
+
 
 export default App;

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -13,6 +12,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './SignUp.css'
+import axios from 'axios';
+
 
 // function Copyright(props) {
 //   return (
@@ -32,14 +33,51 @@ import './SignUp.css'
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
+    const navigate = useNavigate();
+    const accesstoken = (localStorage.getItem("accessToken"));
+    const [errors, setErrors] = useState([]);
+
+    useEffect(() => {
+        if (accesstoken) {
+            navigate('/')
+        }
+    }, [accesstoken, navigate])
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+
+        const form = new FormData(event.currentTarget);
+
+        const userData = {
+            username: form.get('usename'), // Correct the typo in 'usename'
+            email: form.get('email'),
+            password: form.get('password'),
+        };
+
+        try {
+            const response = await axios.post('http://localhost:5000/accounts/register', userData);
+
+            if (response.status === 200) {
+                console.log('Registration successful');
+                navigate('/login');
+            } else {
+                const errors = await response.data.errors;
+                // Render errors
+                setErrors(errors);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+
+            if (error.response) {
+                const errors = error.response.data.errors;
+                console.log(errors);
+                // Render errors
+                setErrors(errors);
+            }
+        }
     };
+
+
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -75,27 +113,25 @@ export default function SignUp() {
                         <Typography component="h1" variant="h5">
                             Đăng Kí
                         </Typography>
+                        {errors.length > 0 && (
+                            <div className="error-message">
+                                {errors.map((errorObj, index) => (
+                                    <div key={index} className="error-item">
+                                        <p>{errorObj.msg}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        autoComplete="given-name"
-                                        name="firstName"
-                                        required
-                                        fullWidth
-                                        id="firstName"
-                                        label="Họ"
-                                        autoFocus
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12}>
                                     <TextField
                                         required
                                         fullWidth
-                                        id="lastName"
-                                        label="Tên"
-                                        name="lastName"
-                                        autoComplete="family-name"
+                                        id="usename"
+                                        label="Họ và Tên"
+                                        name="usename"
+                                        autoComplete="usename"
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -131,7 +167,7 @@ export default function SignUp() {
                             <Grid container justifyContent="flex-end">
                                 <Grid item>
                                     <Link to="/login" variant="body2">
-                                        Bạn đã có tài khoản? Đăng nhập
+                                        Bạn đã có tài khoản? Đăng nhập
                                     </Link>
                                 </Grid>
                             </Grid>
