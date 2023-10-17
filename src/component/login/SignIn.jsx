@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import { useState , useEffect} from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './SignIn.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // function Copyright(props) {
 //   return (
@@ -32,19 +33,69 @@ import { Link } from 'react-router-dom';
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [userRole, setUserRole] = useState(null);
+  const accesstoken = (localStorage.getItem("accessToken"));
+
+  useEffect(() => {
+      if (accesstoken) {
+          navigate('/')
+      }
+  }, [accesstoken, navigate])
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const form = new FormData(event.currentTarget);
+
+    const userData = {
+      email: form.get('email'),
+      password: form.get('password'),
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/accounts/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        const token = data.data.token;
+        const role = data.data.Role;
+        const name = data.data.usename;
+
+
+        localStorage.setItem('accessToken', token);
+        localStorage.setItem('Role', role);
+        localStorage.setItem('name', name);
+
+        setUserRole(role);
+
+        navigate('/');
+
+      } else {
+        setError('Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('An error occurred while logging in.');
+    }
   };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
+        {userRole && (
+          <Typography variant="body2">
+            Your role: {userRole}
+          </Typography>
+        )}
         <Grid
           item
           xs={false}
@@ -73,7 +124,7 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Đăng Nhập
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
@@ -81,7 +132,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -91,7 +142,7 @@ export default function SignInSide() {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Mật khẩu"
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -99,7 +150,7 @@ export default function SignInSide() {
               <FormControlLabel
                 className='remember-me-checkbox'
                 control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+                label="Nhớ mật khẩu"
               />
               <Button
                 type="submit"
@@ -107,17 +158,17 @@ export default function SignInSide() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Đăng Nhập
               </Button>
               <Grid container>
                 <Grid item xs>
                   <Link to="/forgot" variant="body2" className='forgot'>
-                    Forgot password?
+                    Quên mật khẩu?
                   </Link>
                 </Grid>
                 <Grid item>
                   <Link to="/register" variant="body2">
-                    Don't have an account? Sign Up
+                    Bạn chưa có tài khoản? Đăng ký
                   </Link>
                 </Grid>
               </Grid>

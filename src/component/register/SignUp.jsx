@@ -1,11 +1,10 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
+import { useEffect} from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -32,14 +31,45 @@ import './SignUp.css'
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
+    const navigate = useNavigate();
+    const accesstoken = (localStorage.getItem("accessToken"));
+
+    useEffect(() => {
+        if (accesstoken) {
+            navigate('/')
+        }
+    }, [accesstoken, navigate])
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        const form = new FormData(event.currentTarget);
+        
+        const userData = {
+            usename: form.get('usename'),
+            email: form.get('email'),
+            password: form.get('password'),
+        };
+    
+        try {
+            const response = await fetch('http://localhost:5000/accounts/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+    
+            if (response.ok) {
+                console.log('Registration successful');
+                navigate('/login')
+            } else {
+                console.error('Registration failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
+    
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -73,29 +103,18 @@ export default function SignUp() {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign up
+                            Đăng kí
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        autoComplete="given-name"
-                                        name="firstName"
-                                        required
-                                        fullWidth
-                                        id="firstName"
-                                        label="First Name"
-                                        autoFocus
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12}>
                                     <TextField
                                         required
                                         fullWidth
-                                        id="lastName"
-                                        label="Last Name"
-                                        name="lastName"
-                                        autoComplete="family-name"
+                                        id="usename"
+                                        label="Họ và Tên"
+                                        name="usename"
+                                        autoComplete="usename"
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -103,7 +122,7 @@ export default function SignUp() {
                                         required
                                         fullWidth
                                         id="email"
-                                        label="Email Address"
+                                        label="Email"
                                         name="email"
                                         autoComplete="email"
                                     />
@@ -113,16 +132,10 @@ export default function SignUp() {
                                         required
                                         fullWidth
                                         name="password"
-                                        label="Password"
+                                        label="Mật khẩu"
                                         type="password"
                                         id="password"
                                         autoComplete="new-password"
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                        label="I want to receive inspiration, marketing promotions and updates via email."
                                     />
                                 </Grid>
                             </Grid>
@@ -132,12 +145,12 @@ export default function SignUp() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Sign Up
+                                Đăng kí
                             </Button>
                             <Grid container justifyContent="flex-end">
                                 <Grid item>
                                     <Link to="/login" variant="body2">
-                                        Already have an account? Sign in
+                                        Bạn đã có tài khoản? Đăng nhập
                                     </Link>
                                 </Grid>
                             </Grid>
