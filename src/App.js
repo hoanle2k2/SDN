@@ -4,7 +4,7 @@ import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
-import EditBlog from "./component/EditBlog/editBlog";
+import EditBlog from "./component/editBlog/EditBlog";
 import HomePage from "./component/home/HomePage";
 
 
