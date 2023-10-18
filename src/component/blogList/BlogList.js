@@ -43,6 +43,7 @@ const BlogList = () => {
     return (
         <div>
             <div className='article'>
+            <div className="article-list">
                 {articles.map(article => (
                     <div className='article-preview border-top border-bottom' key={article.slug}>
                         <div className='artical-meta'>
@@ -65,6 +66,7 @@ const BlogList = () => {
                         </ul>
                     </div>
                 ))}
+            </div>
             </div>
             <div>
                 <PaginationList
