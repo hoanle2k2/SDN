@@ -8,10 +8,12 @@ import EditBlog from "./component/EditBlog/editBlog";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
 import BlogDetail from "./component/blogDetail/BlogDetail.jsx";
+import Verify from "./component/register/Verify";
+
 
 function App() {
   const location = useLocation();
-  const HideHeaderAndFooter = !["/login", "/register", "/forgot"].includes(location.pathname);
+  const HideHeaderAndFooter = !["/login", "/register", "/forgot", "/verify"].includes(location.pathname);
 
   return (
     <div className="app">
@@ -23,6 +25,7 @@ function App() {
           <Route path="/login" element={<SignInSide />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
+          <Route path="/verify" element={<Verify />} />
           <Route path="/blogl" element={<BlogList />} />
           <Route path="/edit" element={<EditBlog />} />
         </Routes>
