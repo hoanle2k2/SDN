@@ -6,7 +6,7 @@ import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
-import EditBlog from "./component/EditBlog/editBlog";
+import EditBlog from "./component/EditBlog/EditBlog";
 
 function App() {
   const location = useLocation();
