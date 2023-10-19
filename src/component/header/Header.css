@@ -17,6 +17,12 @@
     max-height: 50px;
 }
 
+.logo_img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
 .user-actions {
     display: flex;
     align-items: center;
