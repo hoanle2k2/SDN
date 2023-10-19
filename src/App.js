@@ -4,9 +4,10 @@ import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
-import EditBlog from "./component/editBlog/EditBlog";
+import EditBlog from "./component/EditBlog/editBlog";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
+import BlogDetail from "./component/blogDetail/BlogDetail.jsx";
 
 function App() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function App() {
         {HideHeaderAndFooter && <Header />}
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/blogdetail" element={<BlogDetail />} />
           <Route path="/login" element={<SignInSide />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
