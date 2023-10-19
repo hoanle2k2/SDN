@@ -38,7 +38,8 @@ export default function SignInSide() {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(null);
   const accesstoken = (localStorage.getItem("accessToken"));
-  const [errors, setErrors] = useState([]);
+  const [loginError, setLoginError] = useState('');
+
 
   useEffect(() => {
     if (accesstoken) {
@@ -49,12 +50,16 @@ export default function SignInSide() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    
 
     const userData = {
       email: form.get('email'),
       password: form.get('password'),
     };
+
+    if (!userData) {
+      setLoginError('Vui lòng nhập email và mật khẩu.');
+      return;
+    }
 
     try {
       const response = await axios.post('http://localhost:5000/accounts/login', userData, {
@@ -77,18 +82,19 @@ export default function SignInSide() {
 
         navigate('/');
       } else {
-        setErrors('Login failed. Please check your credentials.');
+        setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
       }
     } catch (error) {
       console.error('Error:', error);
       if (error.response) {
         const errors = error.response.data.errors;
         console.log(errors);
-        // Render errors
-        setErrors(errors);
+        setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
       }
     }
   };
+
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -129,13 +135,18 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Đăng Nhập
             </Typography>
-            {errors.length > 0 && (
+            {/* {errors.length > 0 && (
               <div className="error-message">
                 {errors.map((errorObj, index) => (
                   <div key={index} className="error-item">
                     <p>{errorObj.msg}</p>
                   </div>
                 ))}
+              </div>
+            )} */}
+            {loginError && (
+              <div className="error-message">
+                <p>{loginError}</p>
               </div>
             )}
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
