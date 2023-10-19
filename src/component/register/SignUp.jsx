@@ -35,7 +35,8 @@ const defaultTheme = createTheme();
 export default function SignUp() {
     const navigate = useNavigate();
     const accesstoken = (localStorage.getItem("accessToken"));
-    const [errors, setErrors] = useState([]);
+    const [loginError, setLoginError] = useState('');
+
 
     useEffect(() => {
         if (accesstoken) {
@@ -49,7 +50,7 @@ export default function SignUp() {
         const form = new FormData(event.currentTarget);
 
         const userData = {
-            username: form.get('usename'), // Correct the typo in 'usename'
+            usename: form.get('usename'), 
             email: form.get('email'),
             password: form.get('password'),
         };
@@ -57,22 +58,19 @@ export default function SignUp() {
         try {
             const response = await axios.post('http://localhost:5000/accounts/register', userData);
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 console.log('Registration successful');
-                navigate('/login');
+                localStorage.setItem('code', response.data.data.verificationCode);
+                navigate('/verify');
             } else {
-                const errors = await response.data.errors;
-                // Render errors
-                setErrors(errors);
+                setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
             }
         } catch (error) {
             console.error('Error:', error);
-
             if (error.response) {
                 const errors = error.response.data.errors;
                 console.log(errors);
-                // Render errors
-                setErrors(errors);
+                setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
             }
         }
     };
@@ -113,20 +111,16 @@ export default function SignUp() {
                         <Typography component="h1" variant="h5">
                             Đăng Kí
                         </Typography>
-                        {errors.length > 0 && (
+                        {loginError && (
                             <div className="error-message">
-                                {errors.map((errorObj, index) => (
-                                    <div key={index} className="error-item">
-                                        <p>{errorObj.msg}</p>
-                                    </div>
-                                ))}
+                                <p>{loginError}</p>
                             </div>
                         )}
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
-                                        required
+                                        
                                         fullWidth
                                         id="usename"
                                         label="Họ và Tên"
