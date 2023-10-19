@@ -60,8 +60,7 @@ export default function SignUp() {
 
             if (response.status === 201) {
                 console.log('Registration successful');
-                localStorage.setItem('code', response.data.data.verificationCode);
-                navigate('/verify');
+                navigate('/login');
             } else {
                 setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
             }

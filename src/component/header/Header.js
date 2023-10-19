@@ -40,7 +40,7 @@ const Header = () => {
     <header className={`header ${loggedIn ? 'logged-in' : 'guest'}`}>
       <div className="logo">
         <Link to='/'>
-          <img src="https://cdn.logojoy.com/wp-content/uploads/2018/05/30164225/572.png" alt="Logo" />
+          <img className='logo_img' src="https://cdn.logojoy.com/wp-content/uploads/2018/05/30164225/572.png" alt="Logo" />
         </Link>
       </div>
 

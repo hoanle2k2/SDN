@@ -8,7 +8,7 @@ import EditBlog from "./component/EditBlog/EditBlog";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
 import BlogDetail from "./component/blogDetail/BlogDetail.jsx";
-import Verify from "./component/register/Verify";
+
 
 
 function App() {
@@ -25,7 +25,6 @@ function App() {
           <Route path="/login" element={<SignInSide />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
-          <Route path="/verify" element={<Verify />} />
           <Route path="/blogl" element={<BlogList />} />
           <Route path="/edit" element={<EditBlog />} />
         </Routes>
