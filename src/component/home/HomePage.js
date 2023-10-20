@@ -31,6 +31,7 @@ const HomePage = () => {
             setTag([...tag, arr])
     }
     const [filter, setFilter] = useState(0);
+    const token = localStorage.getItem('accessToken');
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -43,7 +44,7 @@ const HomePage = () => {
 
                 setArticles(response.data.articles);
                 setArticlesCount(response.data.articlesCount);
-                
+
             } catch (error) {
                 console.error("Error fetching articles:", error);
             }
@@ -155,7 +156,7 @@ const HomePage = () => {
                                         <p className="text-primary me-3">{article.author.username}</p>
                                         <p className="text-secondary">{formatDate(article.createdAt)}</p>
                                     </div>
-                                    <Link to={'/blogdetail'} state={{blogId:article.slug}} className="article_title text-dark"><h5>{article.title}</h5></Link>
+                                    <Link to={'/blogdetail'} state={{ blogId: article.slug }} className="article_title text-dark"><h5>{article.title}</h5></Link>
                                     {viewType === 2 && <p className='text-truncate'>{article.description}</p>}
                                     <ul className='tag_list'>
                                         {article.tagList.map(tagList => (

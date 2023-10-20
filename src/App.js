@@ -4,11 +4,10 @@ import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
-import EditBlog from "./component/EditBlog/EditBlog";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
 import BlogDetail from "./component/blogDetail/BlogDetail.jsx";
-
+import EditBlog from "./component/editBlog/EditBlog";
 
 
 function App() {
@@ -27,6 +26,8 @@ function App() {
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/blogl" element={<BlogList />} />
           <Route path="/edit" element={<EditBlog />} />
+          
+         
         </Routes>
 
         {/* {HideHeaderAndFooter && <Footer />} */}
