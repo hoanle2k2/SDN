@@ -5,6 +5,7 @@ import { EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import './EditBlog.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Axios from 'axios';
 
 const EditBlog = () => {
     const fieldStyle = {
@@ -13,15 +14,15 @@ const EditBlog = () => {
     };
 
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
-    // const handleEditorChange = (state) => {
-    //     setEditorState(state);
-    // };
     const handleEditorChange = (state, formik) => {
         setEditorState(state);
         if (formik) {
             formik.setFieldValue("Content", state.getCurrentContent().getPlainText());
         }
     };
+
+    const token = localStorage.getItem('accessToken'); 
+    console.log( "token",token);
 
     const validateForm = (values) => {
         const errors = {};
@@ -42,32 +43,22 @@ const EditBlog = () => {
     const initialValues = {
         Title: "",
         Content: "",
-        TopicID :"",
-        // body: "",
-        // tagList: [
-
-        // ]
+        TopicID :""
     };
 
     const handleSubmit = async (values) => {
-        // const data = {
-        //     article: {
-        //         ...values
-        //     }
-        // }
         console.log(values);
-        // Xử lý logic khi form được submit
-        // console.log("form", data);
-        // try {
-        //     const res = await postNewArticle(token, data)
-        //     console.log("res from form", res);
-        //     const dataRespon = res?.data?.article
-        //     navigate(`/article/${dataRespon.slug}`)
-        // } catch (error) {
-        //     console.log(error);
-        // }
+        try {
+            const res = await Axios.post("http://localhost:5000/blog/create", values,{
+                headers: {
+                    authorization: `token ${token}`,
+                }
+              })
+            console.log("res from form", res);
+        } catch (error) {
+            console.log(error);
+        }
     };
-
 
     return (
         <div className='mt-26'>
@@ -85,21 +76,6 @@ const EditBlog = () => {
                                     <h5> <ErrorMessage style={{ color: 'red' }} name="Title" component="div" /></h5>
                                 </div>
                                 <div className='my-2 form-control form-control-lg'>
-                                    {/* <Field
-                                    as="textarea"
-                                    rows="8"
-                                    placeholder="Write your blog (in markdown)"
-                                    name="body"
-                                    className="form-control form-control-lg"
-                                    
-                                /> */}
-
-                                    {/* <Editor
-                                    editorState={editorState}
-                                    onEditorStateChange={handleEditorChange}
-                                    placeholder="Write your blog (in markdown)"
-                                   
-                                /> */}
                                     <Editor
                                         editorState={editorState}
                                         onEditorStateChange={(state) => handleEditorChange(state, formik)}
@@ -110,30 +86,11 @@ const EditBlog = () => {
                                 <div className="my-2">
                                     <Field as="select" id="selectedOption" name="TopicID">
                                         <option value="">TopicID</option>
-                                        <option value="option1">Option 1</option>
-                                        <option value="option2">Option 2</option>
-                                        <option value="option3">Option 3</option>
+                                        <option value="option1">Công Nghệ</option>
+                                        <option value="option2">Khoa Học</option>
+                                        <option value="option3">IOT</option>
                                     </Field>
                                 </div>
-
-                                {/* <div className='my-2'>
-                                <FieldArray name="tagList">
-                                    <div>
-                                        <div>
-                                            <Field
-                                                // name={`tagList[${index}]`}
-                                                placeholder="Enter tags"
-                                                className="form-control form-control-lg"
-                                            />
-                                        </div>
-
-                                        <button className='btn btn-info' type="button" >
-                                            Add Tag
-                                        </button>
-                                    </div>
-
-                                </FieldArray>
-                            </div> */}
                                 <div className="d-flex justify-content-end">
                                     <button className=" sb btn btn-success btn-lg" type="submit">Submit</button>
                                 </div>
