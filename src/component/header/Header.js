@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [showProfileList, setShowProfileList] = useState(false);
   const [userRole, setUserRole] = useState('');
   const name = localStorage.getItem('name');
-  const navigate = useNavigate();
+
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
     const storedUserRole = localStorage.getItem('Role');
@@ -17,8 +17,7 @@ const Header = () => {
     if (storedToken) {
       setLoggedIn(true);
       setUserRole(storedUserRole);
-    }
-    else {
+    } else {
       setLoggedIn(false);
       setUserRole('');
     }
@@ -41,7 +40,7 @@ const Header = () => {
     <header className={`header ${loggedIn ? 'logged-in' : 'guest'}`}>
       <div className="logo">
         <Link to='/'>
-          <img className='logo_img' src="https://cdn.logojoy.com/wp-content/uploads/2018/05/30164225/572.png" alt="Logo" />
+          <img className='logo_img' src="https://cdn.logojoy.com/wp-content/uploads/2018/05/30164225/572.png" alt="Logo" style={{width : '150px' , objectFit : 'cover'}}/>
         </Link>
       </div>
 
