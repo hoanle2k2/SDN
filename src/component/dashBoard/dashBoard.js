@@ -2,7 +2,7 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import UsersLogo from '../../users.svg';
 import TopicsLogo from '../../topics.svg';
 import { useState } from "react";
-import ColumnChart from "./columnGraph";
+import ColumnChart from "./ColumnGraph";
 
 const DashBoard = () => {
     const [isMonthly, setIsMonthly] = useState(false);

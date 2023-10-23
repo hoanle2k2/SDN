@@ -7,9 +7,11 @@ import BlogList from "./component/blogList/BlogList";
 import EditBlog from "./component/EditBlog/EditBlog";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
-import DashBoard from "./component/dashBoard/dashBoard";
-import Navbar from "./component/navBar/navBar";
-import ManageUser from "./component/manageUser/manageUser";
+import Navbar from "./component/navBar/NavBar.js";
+import DashBoard from "./component/dashBoard/DashBoard.js";
+import ManageUser from "./component/adminManage/ManageUser.js";
+import ManageTopic from "./component/adminManage/ManageTopic.js";
+
 
 function App() {
   const location = useLocation();
@@ -29,6 +31,8 @@ function App() {
           <Route path="/admin" element={<Navbar/>}>
             <Route path="dashboard" element={<DashBoard />} />
             <Route path="users" element={<ManageUser />} />
+            <Route path="topics" element={<ManageTopic />} />
+
           </Route>
         </Routes>
 
