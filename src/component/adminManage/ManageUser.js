@@ -1,5 +1,6 @@
 import { Box, Button, Container, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import BasicTable from "./basicTable";
+import BasicTable from "./BasicTable";
+
 const ManageUser = () => {
     const rows = [{username : 'lorem123' , role : 'user' , action : 'Admin/user' , status : true} , 
     {username : 'tiger123' , role : 'user' , action : 'Admin/user' , status : false}];
@@ -17,7 +18,7 @@ const ManageUser = () => {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                 <Box sx={{
-                    backgroundColor: '#FFF0EF', justifyContent: 'space-around'
+                     justifyContent: 'space-around'
                     , borderRadius: 7, height: '100px', width: '240px', flexDirection: 'column'
                     , display: 'flex', paddingLeft: 4, paddingTop: 2, paddingRight: 2 ,
                     marginTop : "6px"
@@ -43,7 +44,7 @@ const ManageUser = () => {
                     <TextField placeholder="Enter username" size="small"></TextField>
                 </Box>
                 <Box sx={{
-                    backgroundColor: '#FFF0EF', justifyContent: 'space-between'
+                     justifyContent: 'space-between'
                     , borderRadius: 7, height: '100px', width: '240px',
                     flexDirection : 'column-reverse',
                     padding : '10px'
@@ -52,8 +53,8 @@ const ManageUser = () => {
                 }}>
                     <Button sx={{
                         borderRadius: 7, backgroundColor: '#FF9685',
-                        padding: 2, width: '106px',
-                        height: '41px', color: 'white'
+                        padding: 2, width: '106px', marginTop: 3, 
+                        height: '41px', color: 'white', 
                     }}>Search</Button>
                 </Box>
             </Box>
