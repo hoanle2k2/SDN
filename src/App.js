@@ -16,6 +16,8 @@ import DashBoard from "./component/dashBoard/DashBoard";
 function App() {
   const location = useLocation();
   const HideHeaderAndFooter = !["/login", "/register", "/forgot"].includes(location.pathname);
+  axios.defaults.baseURL = 'http://localhost:5000';
+
 
   return (
     <div className="app">
