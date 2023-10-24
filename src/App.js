@@ -11,11 +11,14 @@ import Navbar from "./component/navBar/NavBar.js";
 import DashBoard from "./component/dashBoard/DashBoard.js";
 import ManageUser from "./component/adminManage/ManageUser.js";
 import ManageTopic from "./component/adminManage/ManageTopic.js";
+import axios from 'axios';
 
 
 function App() {
   const location = useLocation();
   const HideHeaderAndFooter = !["/login", "/register", "/forgot"].includes(location.pathname);
+  axios.defaults.baseURL = 'http://localhost:5000';
+
 
   return (
     <div className="app">

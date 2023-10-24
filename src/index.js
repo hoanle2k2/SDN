@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+
+// axios.defaults.baseURL = "http://localhost:8080/";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

@@ -66,7 +66,7 @@ export default function SignInSide() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/accounts/login', userData, {
+      const response = await axios.post('/accounts/login', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
