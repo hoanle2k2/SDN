@@ -70,7 +70,7 @@ const EditBlog = () => {
                         validate={validateForm}
                     >
                         {(formik) => (
-                            <Form style={fieldStyle}>
+                            <Form style={fieldStyle} action="http://localhost:5000/blog/create" method="post" >
                                 <div className='my-2'>
                                     <Field type="text" placeholder="Blog Title" name="Title" className="form-control form-control-lg" />
                                     <h5> <ErrorMessage style={{ color: 'red' }} name="Title" component="div" /></h5>
