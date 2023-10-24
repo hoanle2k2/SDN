@@ -4,13 +4,13 @@ import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
 import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
-import EditBlog from "./component/EditBlog/EditBlog";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
-import Navbar from "./component/navBar/NavBar.js";
-import DashBoard from "./component/dashBoard/DashBoard.js";
 import ManageUser from "./component/adminManage/ManageUser.js";
-import ManageTopic from "./component/adminManage/ManageTopic.js";
+import ManageTopic from "./component/adminManage/ManageTopic";
+import EditBlog from "./component/EditBlog/EditBlog.jsx";
+import Navbar from "./component/navBar/NavBar";
+import DashBoard from "./component/dashBoard/DashBoard";
 
 
 function App() {
