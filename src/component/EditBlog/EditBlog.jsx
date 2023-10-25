@@ -22,7 +22,6 @@ const EditBlog = () => {
     };
 
     const token = localStorage.getItem('accessToken'); 
-    console.log( "token",token);
 
     const validateForm = (values) => {
         const errors = {};

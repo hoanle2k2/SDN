@@ -38,7 +38,7 @@ const HomePage = () => {
             try {
                 const offset = (currentPage - 1) * limit;
                 const apiUrl = `https://api.realworld.io/api/articles?limit=${limit}&offset=${offset}`;
-                const apiUrl2 = `http://localhost:5000/?filter=${filter}&&sort=${Sort}&&orderBy=${orderBy}`;
+                const apiUrl2 = `http://localhost:5000/home?filter=${filter}&&sort=${Sort}&&orderBy=${orderBy}`;
 
                 const response = await axios.get(apiUrl);
 
