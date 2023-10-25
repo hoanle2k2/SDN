@@ -9,8 +9,9 @@ import Header from "./component/header/Header";
 import ManageUser from "./component/adminManage/ManageUser.js";
 import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
-import Navbar from "./component/navBar/NavBar";
-import DashBoard from "./component/dashBoard/DashBoard";
+import Navbar from "./component/navBar/navBar";
+import DashBoard from "./component/dashBoard/dashBoard";
+import Profile from "./component/profile/Profile";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/blogl" element={<BlogList />} />
           <Route path="/edit" element={<EditBlog />} />
+          <Route  path="/profile" element={<Profile  />} />
           <Route path="/admin" element={<Navbar/>}>
             <Route path="dashboard" element={<DashBoard />} />
             <Route path="users" element={<ManageUser />} />
