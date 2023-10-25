@@ -50,7 +50,7 @@ export default function SignUp() {
         const form = new FormData(event.currentTarget);
 
         const userData = {
-            usename: form.get('usename'), 
+            usename: form.get('usename'),
             email: form.get('email'),
             password: form.get('password'),
         };
@@ -119,7 +119,7 @@ export default function SignUp() {
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
-                                        
+
                                         fullWidth
                                         id="usename"
                                         label="Họ và Tên"
@@ -157,7 +157,12 @@ export default function SignUp() {
                             >
                                 Đăng Kí
                             </Button>
-                            <Grid container justifyContent="flex-end">
+                            <Grid container justifyContent="space-between">
+                                <Grid item>
+                                    <Link to="/" variant="body2">
+                                        Trở về Home
+                                    </Link>
+                                </Grid>
                                 <Grid item>
                                     <Link to="/login" variant="body2">
                                         Bạn đã có tài khoản? Đăng nhập
