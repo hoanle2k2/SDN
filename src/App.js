@@ -11,12 +11,14 @@ import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
 import Navbar from "./component/navBar/NavBar";
 import DashBoard from "./component/dashBoard/DashBoard";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
   const location = useLocation();
   const HideHeaderAndFooter = !["/login", "/register", "/forgot"].includes(location.pathname);
-  axios.defaults.baseURL = 'http://localhost:5000';
+  //axios.baseURL = 'http://localhost:5000';
 
 
   return (
@@ -40,6 +42,19 @@ function App() {
 
         {/* {HideHeaderAndFooter && <Footer />} */}
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <ToastContainer />
     </div>
   );
 }

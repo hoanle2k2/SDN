@@ -83,7 +83,7 @@ export default function TopicTable({ rows }) {
                         borderRadius: 7, backgroundColor: '#FF9685',
                         padding: 2, width: '106px', marginTop: 1,
                         height: '41px', color: 'white', marginLeft: 5,
-                    }}>Search</Button>
+                    }}>Add</Button>
                 </Box>
             </div>
         </div>
