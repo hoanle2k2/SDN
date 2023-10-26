@@ -11,9 +11,12 @@ import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
 import Navbar from "./component/navBar/NavBar";
 import DashBoard from "./component/dashBoard/DashBoard";
+import Profile from "./component/profile/Profile"
+import Setting from "./component/Setting/Setting";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BlogDetail from "./component/blogDetail/BlogDetail";
+
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:5000";
@@ -33,6 +36,8 @@ function App() {
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/blogl" element={<BlogList />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/setting" element={<Setting />} />
           <Route path="/edit" element={<EditBlog />} />
           <Route path="/blogdetail/:blogid" element={<BlogDetail />} />
           <Route path="/admin" element={<Navbar />}>

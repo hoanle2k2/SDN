@@ -102,7 +102,7 @@ const Header = () => {
 
               {userRole === 'USER' && (
                 <div className='narbar-list'>
-                  <div className='profile'>Trang cá nhân</div>
+                  <Link to="/profile">Trang Cá Nhân</Link>
                   <div onClick={handleLogout}>Đăng xuất</div>
                 </div>
               )}

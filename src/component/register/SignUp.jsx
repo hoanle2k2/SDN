@@ -78,7 +78,7 @@ export default function SignUp() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Grid container component="main" sx={{ height: '100vh' }}>
+            <Grid container container2  component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid
                     item
@@ -116,7 +116,7 @@ export default function SignUp() {
                             </div>
                         )}
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-                            <Grid container spacing={2}>
+                            <Grid container container2 spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
 
@@ -157,7 +157,7 @@ export default function SignUp() {
                             >
                                 Đăng Kí
                             </Button>
-                            <Grid container justifyContent="space-between">
+                            <Grid container container2 justifyContent="space-between">
                                 <Grid item>
                                     <Link to="/" variant="body2">
                                         Trở về Home
