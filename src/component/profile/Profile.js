@@ -11,7 +11,7 @@
                         <img src={ "https://api.realworld.io/images/smiley-cyrus.jpeg"} alt="" />
                         <h4>username</h4>
                         
-                        <Link to="/Setting">
+                        <Link to="/setting">
                             <i className="fa fa-cog"></i> Edit Profile Settings
                         </Link>
                     
