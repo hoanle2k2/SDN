@@ -11,11 +11,6 @@ import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
 import Navbar from "./component/navBar/NavBar";
 import DashBoard from "./component/dashBoard/DashBoard";
-import Profile from "./component/profile/Profile"
-import Setting from "./component/Setting/Setting";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import BlogDetail from "./component/blogDetail/BlogDetail";
 
 import axios from "axios";
 
@@ -39,8 +34,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/edit" element={<EditBlog />} />
-          <Route path="/blogdetail/:blogid" element={<BlogDetail />} />
-          <Route path="/admin" element={<Navbar />}>
+          <Route path="/admin" element={<Navbar/>}>
             <Route path="dashboard" element={<DashBoard />} />
             <Route path="users" element={<ManageUser />} />
             <Route path="topics" element={<ManageTopic />} />
