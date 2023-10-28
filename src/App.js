@@ -1,4 +1,3 @@
-
 import { Routes, Route, useLocation } from "react-router-dom";
 import SignInSide from "./component/login/SignIn";
 import SignUp from "./component/register/SignUp";
@@ -11,15 +10,20 @@ import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
 import Navbar from "./component/navBar/NavBar";
 import DashBoard from "./component/dashBoard/DashBoard";
+import Profile from "./component/profile/Profile";
+import Setting from "./component/Setting/Setting";
+import BlogDetail from "./component/blogDetail/blogDetail";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import axios from "axios";
 
+
+axios.defaults.baseURL = "http://localhost:5000";
 function App() {
   const location = useLocation();
   const HideHeaderAndFooter = !["/login", "/register", "/forgot"].includes(location.pathname);
   //axios.baseURL = 'http://localhost:5000';
-
 
   return (
     <div className="app">
@@ -31,13 +35,15 @@ function App() {
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/blogl" element={<BlogList />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/setting" element={<Setting />} />
           <Route path="/edit" element={<EditBlog />} />
           <Route path="/admin" element={<Navbar/>}>
             <Route path="dashboard" element={<DashBoard />} />
             <Route path="users" element={<ManageUser />} />
             <Route path="topics" element={<ManageTopic />} />
-
           </Route>
+          <Route path="/blogDetail/:blogid" element={<BlogDetail/>}></Route>
         </Routes>
 
         {/* {HideHeaderAndFooter && <Footer />} */}
@@ -58,6 +64,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
