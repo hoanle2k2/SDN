@@ -47,6 +47,8 @@ const EditBlog = () => {
 
         if (!values.Title) {
             errors.Title = 'Title can not be blank.';
+        } else if (values.Title.length < 5) {
+            errors.Title = 'Title must be at least 5 characters long.';
         }
         else if (!values.Content) {
             errors.Content = ' Content can not be blank.';
@@ -58,7 +60,7 @@ const EditBlog = () => {
         //     errors.TopicID = 'Please select a TopicID.';
         //   }
         if (!values.TopicID || values.TopicID === 'TopicID') {
-            errors.TopicID = 'Please select a valid Topic.';
+            errors.TopicID = 'You must select a Topic';
         }
 
         return errors;
