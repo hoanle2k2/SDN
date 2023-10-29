@@ -10,8 +10,8 @@ export default function BasicTable({ rows }) {
                         <TableCell>Username</TableCell>
                         <TableCell align="right">Role</TableCell>
                         <TableCell align="right">ChangeRole</TableCell>
-                        <TableCell align="right">Lock/Unlock</TableCell>
                         <TableCell align="right">Option</TableCell>
+                        <TableCell align="right">Lock/Unlock</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -30,6 +30,23 @@ export default function BasicTable({ rows }) {
                                     <MenuItem value="user">User</MenuItem>
                                 </Select>
                             </TableCell>
+                            {row.role === 'contentManager' && (
+                                <TableCell align="right">
+                                    <Select value={row.selectedOption} sx={{
+                                        border: '1px solid #ccc',
+                                        fontSize: '12px',
+                                        height: '3rem',
+                                    }}>
+                                        <MenuItem value="sdn">SDN</MenuItem>
+                                        <MenuItem value="public">Public</MenuItem>
+                                    </Select>
+                                </TableCell>
+                            )}
+                            {row.role !== 'contentManager' && (
+                                <TableCell align="right">
+                                    <span>No Option</span>
+                                </TableCell>
+                            )}
                             <TableCell align="right">
                                 <Button
                                     sx={{
@@ -61,23 +78,6 @@ export default function BasicTable({ rows }) {
                                     Unlock
                                 </Button>
                             </TableCell>
-                            {row.role === 'contentManager' && (
-                                <TableCell align="right">
-                                    <Select value={row.selectedOption} sx={{
-                                        border: '1px solid #ccc',
-                                        fontSize: '12px',
-                                        height: '3rem',
-                                    }}>
-                                        <MenuItem value="sdn">SDN</MenuItem>
-                                        <MenuItem value="public">Public</MenuItem>
-                                    </Select>
-                                </TableCell>
-                            )}
-                            {row.role !== 'contentManager' && (
-                                <TableCell align="right">
-                                    <span>No Option</span>
-                                </TableCell>
-                            )}
                         </TableRow>
                     ))}
                 </TableBody>
