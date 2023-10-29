@@ -1,12 +1,5 @@
-import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { Button } from '@mui/material';
+import React from 'react';
+import { Button, Select, TableCell, TableRow, TableBody, TableHead, Table, TableContainer, Paper, MenuItem } from '@mui/material';
 
 export default function BasicTable({ rows }) {
     return (
@@ -16,34 +9,74 @@ export default function BasicTable({ rows }) {
                     <TableRow>
                         <TableCell>Username</TableCell>
                         <TableCell align="right">Role</TableCell>
-                        <TableCell align="right">Action</TableCell>
+                        <TableCell align="right">ChangeRole</TableCell>
+                        <TableCell align="right">Option</TableCell>
                         <TableCell align="right">Lock/Unlock</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rows.map((row) => (
-                        <TableRow
-                            key={row.username}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
+                        <TableRow key={row.username}>
                             <TableCell component="th" scope="row">
                                 {row.username}
                             </TableCell>
                             <TableCell align="right">{row.role}</TableCell>
-                            <TableCell align="right">{row.action}</TableCell>
+                            <TableCell align="right">
+                                <Select value={row.changeRole} sx={{
+                                    border: '1px solid #ccc', fontSize: '12px',
+                                    height: '3rem',
+                                }}>
+                                    <MenuItem value="contentManager">Content Manager</MenuItem>
+                                    <MenuItem value="user">User</MenuItem>
+                                </Select>
+                            </TableCell>
+                            {row.role === 'contentManager' && (
+                                <TableCell align="right">
+                                    <Select value={row.selectedOption} sx={{
+                                        border: '1px solid #ccc',
+                                        fontSize: '12px',
+                                        height: '3rem',
+                                    }}>
+                                        <MenuItem value="sdn">SDN</MenuItem>
+                                        <MenuItem value="public">Public</MenuItem>
+                                    </Select>
+                                </TableCell>
+                            )}
+                            {row.role !== 'contentManager' && (
+                                <TableCell align="right">
+                                    <span>No Option</span>
+                                </TableCell>
+                            )}
                             <TableCell align="right">
                                 <Button
-                                    sx={row.status ? {
-                                        backgroundColor: '#FF9685', color: 'white',
-                                        height: '28px', width: '86px', borderRadius: 8
-                                        , textAlign: 'center', paddingTop: '3px'
-                                    } : { fontSize: '14px', color: 'black', textAlign: 'center' }}>Lock</Button>
-                                <Button sx={!row.status ? {
-                                    marginLeft: '5px',
-                                    backgroundColor: '#FF9685', color: 'white',
-                                    height: '28px', width: '86px', borderRadius: 8
-                                    , textAlign: 'center', paddingTop: '3px'
-                                } : { marginLeft: '5px', color: 'black', textAlign: 'center' }}>Unlock</Button>
+                                    sx={{
+                                        backgroundColor: row.status ? '#FF9685' : 'transparent',
+                                        color: row.status ? 'white' : 'black',
+                                        height: '28px',
+                                        width: '86px',
+                                        borderRadius: 8,
+                                        textAlign: 'center',
+                                        paddingTop: '3px',
+                                        border: '1px solid #ccc',
+                                    }}
+                                >
+                                    Lock
+                                </Button>
+                                <Button
+                                    sx={{
+                                        marginLeft: '5px',
+                                        backgroundColor: row.status ? 'transparent' : '#FF9685',
+                                        color: row.status ? 'black' : 'white',
+                                        height: '28px',
+                                        width: '86px',
+                                        borderRadius: 8,
+                                        textAlign: 'center',
+                                        paddingTop: '3px',
+                                        border: '1px solid #ccc',
+                                    }}
+                                >
+                                    Unlock
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}

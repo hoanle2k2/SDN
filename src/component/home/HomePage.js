@@ -33,7 +33,7 @@ const HomePage = () => {
             try {
                 const offset = (currentPage - 1) * limit;
 
-                const apiUrl = `http://localhost:5000/blog/getall/${limit}/${offset}/${topic !== "" ? topic : "none"}/${sortBy}/${orderBy}`;
+                const apiUrl = `/blog/getall/${limit}/${offset}/${topic !== "" ? topic : "none"}/${sortBy}/${orderBy}`;
                 const response = await axios.get(apiUrl);
                 setBlogList(response.data.data);
                 setArticlesCount(response.data.count);

@@ -18,7 +18,7 @@ const Setting = () => {
   useEffect(() => {
     if (token) {
       axios
-        .get('http://localhost:5000/users', {
+        .get('/users', {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -56,7 +56,7 @@ const Setting = () => {
       }
 
       const response = await axios.put(
-        'http://localhost:5000/users',
+        '/users',
         {
           user: {
             username: user.username,

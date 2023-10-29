@@ -18,7 +18,8 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import { toast } from "react-toastify";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 
 // function Copyright(props) {
@@ -66,7 +67,7 @@ export default function SignInSide() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/accounts/login', userData, {
+      const response = await axios.post('/accounts/login', userData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -83,7 +84,7 @@ export default function SignInSide() {
         localStorage.setItem('name', name);
 
         setUserRole(role);
-
+        toast.success("Login Successfully!");
         navigate('/');
       } else {
         setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');

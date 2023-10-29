@@ -19,7 +19,7 @@ export default function TopicTable({ rows }) {
 
     const fetchTopicIDs = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/topic', {
+            const response = await axios.get('/topic', {
                 headers: {
                     authorization: `token ${token}`,
                 },
@@ -39,36 +39,39 @@ export default function TopicTable({ rows }) {
 
     const handleCreateTopic = async () => {
         try {
-          // Lấy giá trị từ trường nhập liệu
-          const inputTopic = document.getElementById('topic-input').value;
-      
-          // Gọi API để tạo chủ đề mới
-          const response = await axios.post('http://localhost:5000/topic/create', {
-            TopicName: inputTopic,
-          }, {
-            headers: {
-              authorization: `token ${token}`,
-            },
-          });
-          toast.success("Create Successfully!");
-      
-          // Thêm chủ đề mới vào danh sách hiện tại
-          const newTopic = response.data;
-          setTopic([...topic, newTopic]);
-      
-          // Xóa giá trị trong trường nhập liệu
-          document.getElementById('topic-input').value = '';
-          fetchTopicIDs();
-        } catch (error) {
-          console.error('Error creating topic:', error);
-        }
-      };
+            // Lấy giá trị từ trường nhập liệu
+            const inputTopic = document.getElementById('topic-input').value;
 
+            // Gọi API để tạo chủ đề mới
+            const response = await axios.post('/topic/create', {
+                TopicName: inputTopic,
+            }, {
+                headers: {
+                    authorization: `token ${token}`,
+                },
+            });
+            toast.success("Create Successfully!");
+
+            // Thêm chủ đề mới vào danh sách hiện tại
+            const newTopic = response.data;
+            setTopic([...topic, newTopic]);
+
+            // Xóa giá trị trong trường nhập liệu
+            document.getElementById('topic-input').value = '';
+            fetchTopicIDs();
+        } catch (error) {
+            console.error('Error creating topic:', error);
+        }
+    };
+
+
+    // ...
 
     return (
         <div style={{ display: 'flex' }}>
             {/* Bảng Topic hiện tại */}
-            <TableContainer component={Paper} sx={{ width: '50%' }}>
+            <TableContainer component={Paper} sx={{ width: '50%', maxHeight: '500px', overflowY: 'auto' }}>
+                {/* Set a fixed height (e.g., 500px) and enable vertical scrolling */}
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -114,9 +117,6 @@ export default function TopicTable({ rows }) {
                 </Table>
             </TableContainer>
 
-
-
-
             {/* Mục New Topic sang bên phải */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginLeft: '10rem' }}>
                 <Box sx={{
@@ -127,7 +127,7 @@ export default function TopicTable({ rows }) {
                     // , display: 'flex', paddingLeft: 4, paddingTop: 2, paddingRight: 2
                 }}>
                     <Typography variant="h5" sx={{ textAlign: 'center' }}>Add Topics</Typography>
-                    <TextField placeholder="Enter topic"  id="topic-input"size="small"></TextField>
+                    <TextField placeholder="Enter topic" id="topic-input" size="small"></TextField>
                 </Box>
                 <Box sx={{
                     justifyContent: 'space-between'
@@ -146,4 +146,5 @@ export default function TopicTable({ rows }) {
             </div>
         </div>
     );
+
 }
