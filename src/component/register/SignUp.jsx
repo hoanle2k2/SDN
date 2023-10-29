@@ -13,7 +13,8 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './SignUp.css'
 import axios from 'axios';
-
+import { toast } from "react-toastify";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // function Copyright(props) {
 //   return (
@@ -56,10 +57,11 @@ export default function SignUp() {
         };
 
         try {
-            const response = await axios.post('http://localhost:5000/accounts/register', userData);
+            const response = await axios.post('/accounts/register', userData);
 
             if (response.status === 201) {
                 console.log('Registration successful');
+                toast.success("Registration Successfully!");
                 navigate('/login');
             } else {
                 setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');

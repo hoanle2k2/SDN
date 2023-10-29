@@ -62,7 +62,7 @@ const EditBlog = () => {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:5000/topic", {
+    Axios.get("/topic", {
       headers: {
         authorization: `token ${token}`,
       },
@@ -75,7 +75,7 @@ const EditBlog = () => {
   const handleSubmit = async (values) => {
     console.log(values);
     try {
-      const res = await Axios.post("http://localhost:5000/blog/create", values, {
+      const res = await Axios.post("/blog/create", values, {
         headers: {
           authorization: `token ${token}`,
         },
