@@ -34,19 +34,23 @@ const EditBlog = () => {
   const validateForm = (values) => {
     const errors = {};
 
-    if (!values.Title) {
-      errors.Title = "Title can not be blank.";
-    } else if (!values.Content) {
-      errors.Content = " Content can not be blank.";
-    } else if (values.Content.length < 10) {
-      errors.Content = "Content must be at least 10 characters long.";
-    }
-    //   if (!values.TopicID) {
-    //     errors.TopicID = 'Please select a TopicID.';
-    //   }
-    if (!values.TopicID || values.TopicID === "TopicID") {
-      errors.TopicID = "Please select a valid Topic.";
-    }
+        if (!values.Title) {
+            errors.Title = 'Title can not be blank.';
+        } else if (values.Title.length < 5) {
+            errors.Title = 'Title must be at least 5 characters long.';
+        }
+        else if (!values.Content) {
+            errors.Content = ' Content can not be blank.';
+        }
+        else if (values.Content.length < 10) {
+            errors.Content = 'Content must be at least 10 characters long.';
+        }
+        //   if (!values.TopicID) {
+        //     errors.TopicID = 'Please select a TopicID.';
+        //   }
+        if (!values.TopicID || values.TopicID === 'TopicID') {
+            errors.TopicID = 'You must select a Topic';
+        }
 
     return errors;
   };
@@ -58,7 +62,7 @@ const EditBlog = () => {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:5000/topic", {
+    Axios.get("/topic", {
       headers: {
         authorization: `token ${token}`,
       },
@@ -71,12 +75,13 @@ const EditBlog = () => {
   const handleSubmit = async (values) => {
     console.log(values);
     try {
-      const res = await Axios.post("http://localhost:5000/blog/create", values, {
+      const res = await Axios.post("/blog/create", values, {
         headers: {
           authorization: `token ${token}`,
         },
       });
       toast.success("Create Successfully!");
+    
       //console.log("res from form", res);
     } catch (error) {
       console.log(error);

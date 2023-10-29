@@ -13,8 +13,14 @@ import EditBlog from "./component/EditBlog/EditBlog.jsx";
 import Navbar from "./component/navBar/NavBar";
 import { ToastContainer } from "react-toastify";
 import DashBoard from "./component/dashBoard/DashBoard";
+import Profile from "./component/profile/Profile";
+import Setting from "./component/Setting/Setting";
+import BlogDetail from "./component/blogDetail/blogDetail";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import axios from "axios";
+
 
 axios.defaults.baseURL = "http://localhost:5000";
 function App() {
@@ -28,7 +34,6 @@ function App() {
         {HideHeaderAndFooter && <Header />}
         <Routes>
           <Route path="/" element={<HomePage />} />
-
           <Route path="/login" element={<SignInSide />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
@@ -41,6 +46,7 @@ function App() {
             <Route path="users" element={<ManageUser />} />
             <Route path="topics" element={<ManageTopic />} />
           </Route>
+          <Route path="/blogDetail/:blogid" element={<BlogDetail/>}></Route>
         </Routes>
 
         {/* {HideHeaderAndFooter && <Footer />} */}

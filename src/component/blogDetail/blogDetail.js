@@ -17,6 +17,7 @@ export default function BlogDetail() {
     //    setUser(JSON.parse(loadUser));
     //  }
     alertStatus = true;
+    console.log(blogid)
     axios
       .get(`/blog/${blogid}`, {
         headers: {

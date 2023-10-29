@@ -2,8 +2,13 @@ import { Box, Button, Container, InputLabel, MenuItem, Select, TextField, Typogr
 import BasicTable from "./BasicTable";
 
 const ManageUser = () => {
-    const rows = [{username : 'lorem123' , role : 'user' , action : 'Admin/user' , status : true} , 
-    {username : 'tiger123' , role : 'user' , action : 'Admin/user' , status : false}];
+    const rows = [
+        { username: 'lorem123', role: 'user', changeRole: 'user', option: 'public', status: true,  },
+        { username: 'manh123', role: 'contentManager', changeRole: 'contentManager', selectedOption: 'sdn', status: true,  },
+        { username: 'tiger123', role: 'user', changeRole: 'user', option: 'user', status: false,  }
+      ];
+      
+    
     return (
         <Container sx={{
             flexGrow: 1,
