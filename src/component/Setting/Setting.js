@@ -120,16 +120,7 @@ const Setting = () => {
                     onChange={handleInputChange}
                   />
                 </fieldset>
-                <fieldset className="form-group">
-                  <textarea
-                    className="form-control form-control-lg"
-                    rows="8"
-                    placeholder="Short bio about you"
-                    name="bio"
-                   
-                    
-                  ></textarea>
-                </fieldset>
+               
                 <fieldset className="form-group">
                   <input
                     className="form-control form-control-lg"

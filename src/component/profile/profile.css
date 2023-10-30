@@ -12,7 +12,25 @@
     border-radius: 100px;
     margin-bottom: 1rem;
 }
-
+.author{
+    padding: 0;
+}
+.artical-meta .author img{
+    display: inline-block;
+    vertical-align: middle;
+    height: 49px;
+    width: 49px;
+    border-radius: 30px;
+}
+.artical-meta a{
+    margin-top: 5px;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+.titles1{
+    color: black;
+    font-weight: 700;
+}
 .bgProfile h4 {
     margin-top: 0;
 }

@@ -11,10 +11,8 @@ import ManageUser from "./component/adminManage/ManageUser.js";
 import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
 import Navbar from "./component/navBar/NavBar";
-import { ToastContainer } from "react-toastify";
+
 import DashBoard from "./component/dashBoard/DashBoard";
-import Profile from "./component/profile/Profile";
-import Setting from "./component/Setting/Setting";
 import BlogDetail from "./component/blogDetail/blogDetail";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

@@ -3,20 +3,19 @@ import './profile.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-
 export default function Profile() {
-
     const [user, setUser] = useState({
         username: '',
         email: '',
         avatar: '',
     });
+    const [userPosts, setUserPosts] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem('accessToken');
-               
+
                 if (token) {
                     const response = await axios.get('http://localhost:5000/users', {
                         headers: {
@@ -25,7 +24,7 @@ export default function Profile() {
                     });
 
                     const userData = response.data.data;
-                    console.log("userdata",userData);
+                    console.log("userdata", userData);
                     setUser({
                         username: userData.username,
                         email: userData.email,
@@ -37,7 +36,27 @@ export default function Profile() {
             }
         };
 
+        const fetchUserPosts = async () => {
+            try {
+                const token = localStorage.getItem('accessToken');
+        
+                if (token) {
+                    const response = await axios.get('http://localhost:5000/blog/user', {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+        
+                    const userPostsData = response.data.userBlogs; // Dữ liệu bài viết đã được lọc
+                    setUserPosts(userPostsData);
+                }
+            } catch (error) {
+                console.error('Error fetching user posts:', error);
+            }
+        };
+
         fetchUserData();
+        fetchUserPosts();
     }, []);
 
     return (
@@ -93,7 +112,6 @@ export default function Profile() {
                             <div>
                                 <div className="article-preview border-top border-bottom">
                                     <div className="artical-meta">
-                                       
                                     </div>
                                 </div>
                             </div>
@@ -105,14 +123,27 @@ export default function Profile() {
                             role="tabpanel"
                             aria-labelledby="pills-profile-tab"
                         >
-                            <div>
-                                <div className="article-preview border-top border-bottom">
-                                    <div className="artical-meta">
-                                       
+                            {userPosts.length > 0 ? (
+                                userPosts.map((post, index) => (
+                                    <div key={index} className="article-preview border-top border-bottom">
+                                        <div className="artical-meta">
+                                            <div className="author">
+                                                <img className="rounded-circle" src={user.avatar} alt="avatar" />
+                                                <div className="info">                                      
+                                                    <Link to="/profile">{user.username}</Link>
+                                                    <p>{post.createdAt}</p>
+                                                </div>
+                                            </div>
+                                          
+                                        </div>
+                                        <Link to={'/blogDetail/:blogid'} className="titles1" >{post.Title}</Link>
+                                        <Link to={'/blogDetail/:blogid'} className="article-description" >{post.Content}</Link>
+                                        <Link to={'/blogDetail/:blogid'} className="readm">Read more...</Link>
                                     </div>
-                                </div>
-                            </div>
-                            <p>No favorite articles yet.</p>
+                                ))
+                            ) : (
+                                <p>No posts available yet.</p>
+                            )}
                         </div>
                     </div>
                 </div>
