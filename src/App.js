@@ -5,8 +5,6 @@ import ForgotPassword from "./component/login/ForgotPassword";
 import BlogList from "./component/blogList/BlogList";
 import HomePage from "./component/home/HomePage";
 import Header from "./component/header/Header";
-import Profile from "./component/profile/Profile";
-import Setting from "./component/Setting/Setting";
 import ManageUser from "./component/adminManage/ManageUser.js";
 import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
