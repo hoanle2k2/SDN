@@ -61,3 +61,12 @@
 .commentU {
   width: 50%;
 }
+#myButton {
+  border: none; /* Loại bỏ viền của button */
+  background-color: transparent; /* Đặt nền của button là trong suốt */
+  padding: 0; /* Xóa khoảng cách giữa icon và viền của button */
+}
+
+#myButton i {
+  border: none; /* Loại bỏ viền của icon */
+}

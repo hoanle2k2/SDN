@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import "./BlogDetail.css";
 
 export default function BlogDetail() {
@@ -17,7 +17,7 @@ export default function BlogDetail() {
     //    setUser(JSON.parse(loadUser));
     //  }
     alertStatus = true;
-    console.log(blogid)
+    console.log("blogid",blogid)
     axios
       .get(`/blog/${blogid}`, {
         headers: {
@@ -38,6 +38,7 @@ export default function BlogDetail() {
       });
   }, []);
 
+  
   // Hàm để hiển thị menu tùy chọn khi nhấp vào biểu tượng ba chấm
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -63,6 +64,10 @@ export default function BlogDetail() {
     // Đóng menu tùy chọn sau khi thực hiện xong
     setShowOptions(false);
   };
+
+  const handleOnClick = () => {
+    navigate(`/updateBlog/`, { state: { blogid } })
+  }
 
   return (
     <div className="container-fluid row">
@@ -93,6 +98,7 @@ export default function BlogDetail() {
               <p>
                 <i className="bi bi-bookmark"></i> {blogDetailState?.blogDetail?.numberOfComments} lượt lưu
               </p>
+
             </div>
           </div>
         </div>
@@ -104,6 +110,11 @@ export default function BlogDetail() {
             <div>
               <i className="bi bi-bookmark"></i>
             </div>
+            
+              <button id="myButton" onClick={()=>{handleOnClick()}}>
+                <i className="bi bi-pen-fill"></i>
+              </button>
+        
           </div>
           <div className="col-11">{blogDetailState?.blogDetail?.Content}</div>
         </div>

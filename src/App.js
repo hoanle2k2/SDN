@@ -13,10 +13,11 @@ import DashBoard from "./component/dashBoard/DashBoard";
 import Profile from "./component/profile/Profile";
 import Setting from "./component/Setting/Setting";
 import BlogDetail from "./component/blogDetail/blogDetail";
+import UpdateBlog from "./component/EditBlog/UpdateBlog";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import axios from "axios";
+
 
 
 axios.defaults.baseURL = "http://localhost:5000";
@@ -44,6 +45,8 @@ function App() {
             <Route path="topics" element={<ManageTopic />} />
           </Route>
           <Route path="/blogDetail/:blogid" element={<BlogDetail/>}></Route>
+          <Route path="/updateBlog" element={<UpdateBlog/>}></Route>
+
         </Routes>
 
         {/* {HideHeaderAndFooter && <Footer />} */}

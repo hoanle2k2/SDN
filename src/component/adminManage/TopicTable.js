@@ -16,7 +16,7 @@ export default function TopicTable({ rows }) {
 
     const token = localStorage.getItem("accessToken");
     const [topic, setTopic] = useState([]);
-
+    const [editingTopic, setEditingTopic] = useState();
     const fetchTopicIDs = async () => {
         try {
             const response = await axios.get('http://localhost:5000/topic', {
@@ -39,30 +39,88 @@ export default function TopicTable({ rows }) {
 
     const handleCreateTopic = async () => {
         try {
-          // Lấy giá trị từ trường nhập liệu
-          const inputTopic = document.getElementById('topic-input').value;
-      
-          // Gọi API để tạo chủ đề mới
-          const response = await axios.post('http://localhost:5000/topic/create', {
-            TopicName: inputTopic,
-          }, {
-            headers: {
-              authorization: `token ${token}`,
-            },
-          });
-          toast.success("Create Successfully!");
-      
-          // Thêm chủ đề mới vào danh sách hiện tại
-          const newTopic = response.data;
-          setTopic([...topic, newTopic]);
-      
-          // Xóa giá trị trong trường nhập liệu
-          document.getElementById('topic-input').value = '';
-          fetchTopicIDs();
+            const inputTopic = document.getElementById('topic-input').value;
+            const response = await axios.post('http://localhost:5000/topic/create', {
+                TopicName: inputTopic,
+            }, {
+                headers: {
+                    authorization: `token ${token}`,
+                },
+            });
+            toast.success("Create Successfully!");
+            const newTopic = response.data;
+            setTopic([...topic, newTopic]);
+            document.getElementById('topic-input').value = '';
+            fetchTopicIDs();
         } catch (error) {
-          console.error('Error creating topic:', error);
+            console.error('Error creating topic:', error);
         }
-      };
+    };
+
+
+    const handleEditTopic = (topicItem) => {
+        const inputElement = document.querySelector(`input[name="${topicItem.TopicName}"]`);
+        if (inputElement) {
+            inputElement.removeAttribute('hidden');
+           
+        }
+        const buttonElement = document.querySelector(`button[name="${topicItem.TopicName}"]`);
+        if (buttonElement) {
+            buttonElement.removeAttribute('hidden');
+           
+        }
+        const buttonElementBack = document.querySelector(`button[name="${topicItem.TopicName}"][id="back"]`);
+        if (buttonElementBack) {
+            buttonElementBack.removeAttribute('hidden');
+           
+        }
+        const topicElement = document.querySelector(`[name="${topicItem.TopicName}"]`);
+        if (topicElement) {
+            topicElement.classList.add('d-none');
+        }
+    };
+
+    const handleSumitTopicName = async (topicItem) => {
+        console.log("sdsd", topicItem._id);
+        const response = await axios.post('http://localhost:5000/topic/create', {
+            TopicName: editingTopic,
+            TopicID: topicItem._id
+
+        }, {
+            headers: {
+                authorization: `token ${token}`,
+            },
+        }).then(data => {
+            fetchTopicIDs();
+            toast.success("Update Successfully!");
+            //console.log(data.data);
+        });
+    }
+
+    const handleBack = (topicItem) => {
+        const inputElement = document.querySelector(`input[name="${topicItem.TopicName}"]`);
+        if (inputElement) {
+            inputElement.setAttribute('hidden',"");
+           
+        }
+        const buttonElement = document.querySelector(`button[name="${topicItem.TopicName}"][id="myButton"]`);
+        if (buttonElement) {
+            buttonElement.setAttribute('hidden',"");
+           
+        }
+        const buttonElementBack = document.querySelector(`button[name="${topicItem.TopicName}"][id="back"]`);
+        if (buttonElementBack) {
+            buttonElementBack.setAttribute('hidden',"");
+           
+        }
+        const topicElement = document.querySelector(`[name="${topicItem.TopicName}"]`);
+        if (topicElement) {
+            topicElement.classList.remove('d-none');
+
+            topicElement.classList.add('d-block');
+        }
+    }
+
 
 
     return (
@@ -83,10 +141,13 @@ export default function TopicTable({ rows }) {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {topicItem.TopicName}
+                                    <div className="" name={topicItem.TopicName} >{topicItem.TopicName}</div>
+                                    <input hidden name={topicItem.TopicName}  onChange={e => setEditingTopic(e.target.value)} />
+                                    <button hidden id="myButton" className="btn" name={topicItem.TopicName} onClick={() => { handleSumitTopicName(topicItem) }}>Update</button>
+                                    <button hidden className="btn" id="back" name={topicItem.TopicName} onClick={() =>{handleBack(topicItem)}}>Cancel</button>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Button
+                                    {/* <Button
                                         sx={topicItem.status ? {
                                             marginRight: '1rem',
                                             backgroundColor: '#FF9685',
@@ -96,7 +157,7 @@ export default function TopicTable({ rows }) {
                                             borderRadius: 8,
                                             textAlign: 'center',
                                             paddingTop: '3px',
-                                        } : { fontSize: '14px', color: 'black', textAlign: 'center' }}>Delete</Button>
+                                        } : { fontSize: '14px', color: 'black', textAlign: 'center' }}>Delete</Button> */}
                                     <Button sx={!topicItem.status ? {
                                         marginLeft: '5px',
                                         backgroundColor: '#FF9685',
@@ -106,7 +167,8 @@ export default function TopicTable({ rows }) {
                                         borderRadius: 8,
                                         textAlign: 'center',
                                         paddingTop: '3px',
-                                    } : { marginLeft: '5px', color: 'black', textAlign: 'center' }}>Edit</Button>
+                                    } : { marginLeft: '5px', color: 'black', textAlign: 'center' }} onClick={() => handleEditTopic(topicItem)}
+                                    >Edit</Button>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -127,7 +189,7 @@ export default function TopicTable({ rows }) {
                     // , display: 'flex', paddingLeft: 4, paddingTop: 2, paddingRight: 2
                 }}>
                     <Typography variant="h5" sx={{ textAlign: 'center' }}>Add Topics</Typography>
-                    <TextField placeholder="Enter topic"  id="topic-input"size="small"></TextField>
+                    <TextField placeholder="Enter topic" id="topic-input" size="small"></TextField>
                 </Box>
                 <Box sx={{
                     justifyContent: 'space-between'
