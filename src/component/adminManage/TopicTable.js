@@ -19,7 +19,7 @@ export default function TopicTable({ rows }) {
     const [editingTopic, setEditingTopic] = useState();
     const fetchTopicIDs = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/topic', {
+            const response = await axios.get('/topic', {
                 headers: {
                     authorization: `token ${token}`,
                 },
@@ -97,7 +97,7 @@ export default function TopicTable({ rows }) {
         });
     }
 
-    const handleBack = (topicItem) => {
+    const handleBack = async (topicItem) => {
         const inputElement = document.querySelector(`input[name="${topicItem.TopicName}"]`);
         if (inputElement) {
             inputElement.setAttribute('hidden',"");
@@ -119,14 +119,38 @@ export default function TopicTable({ rows }) {
 
             topicElement.classList.add('d-block');
         }
+    
     }
+            // Gọi API để tạo chủ đề mới
+        //     const response = await axios.post('/topic/create', {
+        //         TopicName: inputTopic,
+        //     }, {
+        //         headers: {
+        //             authorization: `token ${token}`,
+        //         },
+        //     });
+        //     toast.success("Create Successfully!");
+
+        //     // Thêm chủ đề mới vào danh sách hiện tại
+        //     const newTopic = response.data;
+        //     setTopic([...topic, newTopic]);
+
+        //     // Xóa giá trị trong trường nhập liệu
+        //     document.getElementById('topic-input').value = '';
+        //     fetchTopicIDs();
+        // } catch (error) {
+        //     console.error('Error creating topic:', error);
+        // }
+    
 
 
+    // ...
 
     return (
         <div style={{ display: 'flex' }}>
             {/* Bảng Topic hiện tại */}
-            <TableContainer component={Paper} sx={{ width: '50%' }}>
+            <TableContainer component={Paper} sx={{ width: '50%', maxHeight: '500px', overflowY: 'auto' }}>
+                {/* Set a fixed height (e.g., 500px) and enable vertical scrolling */}
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -147,17 +171,6 @@ export default function TopicTable({ rows }) {
                                     <button hidden className="btn" id="back" name={topicItem.TopicName} onClick={() =>{handleBack(topicItem)}}>Cancel</button>
                                 </TableCell>
                                 <TableCell align="right">
-                                    {/* <Button
-                                        sx={topicItem.status ? {
-                                            marginRight: '1rem',
-                                            backgroundColor: '#FF9685',
-                                            color: 'white',
-                                            height: '28px',
-                                            width: '86px',
-                                            borderRadius: 8,
-                                            textAlign: 'center',
-                                            paddingTop: '3px',
-                                        } : { fontSize: '14px', color: 'black', textAlign: 'center' }}>Delete</Button> */}
                                     <Button sx={!topicItem.status ? {
                                         marginLeft: '5px',
                                         backgroundColor: '#FF9685',
@@ -175,9 +188,6 @@ export default function TopicTable({ rows }) {
                     </TableBody>
                 </Table>
             </TableContainer>
-
-
-
 
             {/* Mục New Topic sang bên phải */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginLeft: '10rem' }}>
@@ -208,4 +218,5 @@ export default function TopicTable({ rows }) {
             </div>
         </div>
     );
+
 }

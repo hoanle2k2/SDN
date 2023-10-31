@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './Header.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [showProfileList, setShowProfileList] = useState(false);
   const [userRole, setUserRole] = useState('');
   const name = localStorage.getItem('name');
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
@@ -34,20 +38,24 @@ const Header = () => {
 
     setUserRole('');
     setLoggedIn(false);
+    toast.success("Logout Successfully!");
+    navigate('/')
   };
 
   return (
     <header className={`header ${loggedIn ? 'logged-in' : 'guest'}`}>
       <div className="logo">
         <Link to='/'>
-          <img className='logo_img' src="https://cdn.logojoy.com/wp-content/uploads/2018/05/30164225/572.png" alt="Logo" style={{width : '150px' , objectFit : 'cover'}}/>
+          <img className='logo_img' src="https://cdn.logojoy.com/wp-content/uploads/2018/05/30164225/572.png" alt="Logo" style={{ width: '150px', objectFit: 'cover' }} />
         </Link>
       </div>
 
       <div className="search-bar">
         <input type="text" placeholder="Tìm kiếm..." />
         <button type="button" className="search-button">
-          <FontAwesomeIcon icon={faSearch} />
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h0l-.001.001 4.85 4.848a1 1 0 001.415-1.414l-4.848-4.85z" />
+          </svg>
         </button>
       </div>
 
@@ -75,12 +83,13 @@ const Header = () => {
           <div className="user-profile">
             <img src="https://inkythuatso.com/uploads/thumbnails/800/2021/11/logo-fpt-inkythuatso-1-01-01-14-33-35.jpg" alt="Avatar" />
             <span>Xin chào {name.toUpperCase()}</span>
-            <FontAwesomeIcon
-              icon={faBars}
-              className="navbar"
+            <i
+              className="bi bi-list black-icon"
               onClick={toggleProfileList}
-            />
+            ></i>
           </div>
+
+
 
           {showProfileList && (
             <div className="profile-list">
@@ -102,7 +111,7 @@ const Header = () => {
 
               {userRole === 'USER' && (
                 <div className='narbar-list'>
-                  <div className='profile'>Trang cá nhân</div>
+                  <Link to="/profile">Trang cá nhân</Link>
                   <div onClick={handleLogout}>Đăng xuất</div>
                 </div>
               )}
@@ -113,5 +122,6 @@ const Header = () => {
     </header>
   );
 };
+
 
 export default Header;

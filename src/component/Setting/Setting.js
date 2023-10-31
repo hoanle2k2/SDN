@@ -18,7 +18,7 @@ const Setting = () => {
   useEffect(() => {
     if (token) {
       axios
-        .get('http://localhost:5000/users', {
+        .get('/users', {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -56,7 +56,7 @@ const Setting = () => {
       }
 
       const response = await axios.put(
-        'http://localhost:5000/users',
+        '/users',
         {
           user: {
             username: user.username,
@@ -120,16 +120,7 @@ const Setting = () => {
                     onChange={handleInputChange}
                   />
                 </fieldset>
-                <fieldset className="form-group">
-                  <textarea
-                    className="form-control form-control-lg"
-                    rows="8"
-                    placeholder="Short bio about you"
-                    name="bio"
-                   
-                    
-                  ></textarea>
-                </fieldset>
+               
                 <fieldset className="form-group">
                   <input
                     className="form-control form-control-lg"

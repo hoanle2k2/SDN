@@ -8,10 +8,11 @@ import Header from "./component/header/Header";
 import ManageUser from "./component/adminManage/ManageUser.js";
 import ManageTopic from "./component/adminManage/ManageTopic";
 import EditBlog from "./component/EditBlog/EditBlog.jsx";
-import Navbar from "./component/navBar/NavBar";
+import Navbar from "./component/navBar/NavBar"; 
+import Profile from "./component/profile/Profile.js";
+import Setting from "./component/Setting/Setting.js"
+
 import DashBoard from "./component/dashBoard/DashBoard";
-import Profile from "./component/profile/Profile";
-import Setting from "./component/Setting/Setting";
 import BlogDetail from "./component/blogDetail/blogDetail";
 import UpdateBlog from "./component/EditBlog/UpdateBlog";
 import { ToastContainer, toast } from 'react-toastify';
