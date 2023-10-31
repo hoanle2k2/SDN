@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const Header = () => {
+const Header = ({handleSubmit}) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [showProfileList, setShowProfileList] = useState(false);
   const [userRole, setUserRole] = useState('');
@@ -42,6 +42,8 @@ const Header = () => {
     navigate('/')
   };
 
+
+  
   return (
     <header className={`header ${loggedIn ? 'logged-in' : 'guest'}`}>
       <div className="logo">
@@ -50,14 +52,14 @@ const Header = () => {
         </Link>
       </div>
 
-      <div className="search-bar">
-        <input type="text" placeholder="Tìm kiếm..." />
-        <button type="button" className="search-button">
+      <form className="search-bar" onSubmit={handleSubmit}>
+        <input type="text" placeholder="Tìm kiếm..." name='search' id='search' />
+        <button type="submit" className="search-button">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h0l-.001.001 4.85 4.848a1 1 0 001.415-1.414l-4.848-4.85z" />
           </svg>
         </button>
-      </div>
+      </form>
 
       {!loggedIn && !userRole && (
         <div className="user-actions">

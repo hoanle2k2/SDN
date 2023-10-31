@@ -9,42 +9,55 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Await, Link } from "react-router-dom";
 import { format } from "date-fns";
 import './Homepage.css'
-import Header from '../header/Header.js'
 import { vi } from "date-fns/locale";
 import { Sort } from "@mui/icons-material";
 
-const HomePage = () => {
+const HomePage = ({ search }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState(1);
-    const [orderBy, setOrderBy] = useState(-1)
-
-
+    const [orderBy, setOrderBy] = useState(-1);
+    const [userreact, setUserReact] = useState(1);
     const [bloglist, setBlogList] = useState([]);
     const [articlesCount, setArticlesCount] = useState(0);
-    const limit = 10;
-
     const [viewType, setViewType] = useState(1);
-
     const [topic, setTopic] = useState("");
     const token = localStorage.getItem('accessToken');
+    const limit = 10;
+    const handleReact = async (blogid, type) => {
+        if (token != null) {
+            try {
+                const res = await axios.post("/blog/react", { blogid: blogid, type: type }, {
+                    headers: {
+                        authorization: `token ${token}`,
+                    }
+                })
+                setUserReact(userreact * (-1));
+                console.log(userreact)
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+
+
+    }
 
     useEffect(() => {
         const fetchArticles = async () => {
             try {
                 const offset = (currentPage - 1) * limit;
 
-                const apiUrl = `/blog/getall/${limit}/${offset}/${topic !== "" ? topic : "none"}/${sortBy}/${orderBy}`;
+                const apiUrl = `/blog/getall/${search != "" ? search : "none"}/${limit}/${offset}/${topic !== "" ? topic : "none"}/${sortBy}/${orderBy}`;
                 const response = await axios.get(apiUrl);
                 setBlogList(response.data.data);
                 setArticlesCount(response.data.count);
-
+                search=''
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
-
         };
         fetchArticles();
-    }, [currentPage, limit, sortBy, topic, orderBy]);
+    }, [currentPage, limit, sortBy, topic, orderBy, userreact, search]);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -68,8 +81,6 @@ const HomePage = () => {
 
             <div className="content d-flex">
                 <div className='aricle col-9'>
-
-
                     <div class="dropdown">
                         <span className="h6 text-secondary ">Sort by: </span>
                         <span className="dropdown-toggle text-primary h6" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
@@ -98,37 +109,35 @@ const HomePage = () => {
                             <Link to={`/`} onClick={() => setViewType(1)}> <i type="button" className={`icon1 bi bi-card-list ${viewType === 2 && 'text-black'}`} data-toggle="tooltip" data-placement="bottom" title="Only title"></i></Link>
                             <Link to={`/`} onClick={() => setViewType(2)}> <i type="button" className={`icon1 bi bi-newspaper ${viewType === 1 && 'text-black'}`} data-placement="bottom" title="With preview contents"></i></Link>
                         </div>
-
-                        {bloglist.map(blog => (
-
-                            <div className='article d-flex' key={blog._id}>
-
-                                <div className="col-1">
-                                    <Link to={`/`}><img className="author_avatar img-fluid rounded-circle" src={blog.author[0].avatar} alt="avatar" /></Link>
-                                </div>
-                                <div className="col-11">
-                                    <div className="d-flex ">
-                                        <p className="text-danger me-3">{blog.author[0].usename}</p>
-                                        <p className="text-secondary">{formatDate(blog.createdAt)}</p>
+                        {articlesCount === 0 ?
+                            <div>
+                                <p className="h3 text-danger">Ko tìm thấy bài viết phù hợp ${search}!</p>                  
+                            </div> :
+                            bloglist.map(blog => (
+                                <div className='article d-flex' key={blog._id}>
+                                    <div className="col-1">
+                                        <Link to={`/`}><img className="author_avatar img-fluid rounded-circle" src={blog.author[0].avatar} alt="avatar" /></Link>
                                     </div>
-                                    <Link to={'/blogdetail'} state={{ blogId: blog._id }} className="article_title text-dark"><h5>{blog.Title}</h5></Link>
-                                    {viewType === 2 && <p className='text-truncate'>{blog.Content}</p>}
-                                    <ul className='tag_list'>
-                                        <Link><li onClick={() => setTopic(blog.TopicID)} className="tag" >{blog.TopicID}</li></Link>
-                                    </ul>
-                                    {/* <i class="emotion bi bi-eye"> 5</i> */}
-                                    <div className="d-flex">
-                                        <i class="emotion bi bi-bookmark-fill text-primary" >{blog.countbookmark}</i>
-                                        <i class="emotion bi bi-chat-fill text-secondary">#</i>
-                                        <i class="emotion bi bi-heart-fill text-danger">{blog.countfav}</i>
+                                    <div className="col-11">
+                                        <div className="d-flex ">
+                                            <p className="text-danger me-3">{blog.author[0].usename}</p>
+                                            <p className="text-secondary">{formatDate(blog.createdAt)}</p>
+                                        </div>
+                                        <Link to={`/blogdetail/${blog._id}`} className="article_title text-dark"><h5>{blog.Title}</h5></Link>
+                                        {viewType === 2 && <p className='text-truncate'>{blog.Content}</p>}
+                                        <ul className='tag_list'>
+                                            <Link><li onClick={() => setTopic(blog.TopicID)} className="tag" >{blog.TopicID}</li></Link>
+                                        </ul>
+                                        {/* <i class="emotion bi bi-eye"> 5</i> */}
+                                        <div className="d-flex">
+                                            <i onClick={() => handleReact(blog._id, "Bookmark")} class="emotion bi bi-bookmark-fill text-primary" >{blog.countbookmark}</i>
+                                            <i class="emotion bi bi-chat-fill text-secondary">#</i>
+                                            <i onClick={() => handleReact(blog._id, "Fav")} class="emotion bi bi-heart-fill text-danger">{blog.countfav}</i>
+                                        </div>
                                     </div>
-
-
-
                                 </div>
-                            </div>
-
-                        ))}
+                            ))
+                        }
                     </div>
                     <div className="paging" >
                         <PaginationList
