@@ -18,6 +18,7 @@ import UpdateBlog from "./component/EditBlog/UpdateBlog";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import { useState } from "react";
 
 
 
@@ -25,14 +26,19 @@ axios.defaults.baseURL = "http://localhost:5000";
 function App() {
   const location = useLocation();
   const HideHeaderAndFooter = !["/login", "/register", "/forgot"].includes(location.pathname);
+  
   //axios.baseURL = 'http://localhost:5000';
-
+  const [search, setSearch] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSearch(e.target.search.value)
+  }
   return (
     <div className="app">
       <div className="app-blog">
-        {HideHeaderAndFooter && <Header />}
+        {HideHeaderAndFooter && <Header handleSubmit={handleSubmit}/>}
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage search={search}/>} />
           <Route path="/login" element={<SignInSide />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/forgot" element={<ForgotPassword />} />
