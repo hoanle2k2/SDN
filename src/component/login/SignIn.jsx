@@ -78,10 +78,12 @@ export default function SignInSide() {
         const token = data.data.token;
         const role = data.data.Role;
         const name = data.data.usename;
+        const id = data.data._id;
 
         localStorage.setItem('accessToken', token);
         localStorage.setItem('Role', role);
         localStorage.setItem('name', name);
+        localStorage.setItem("userID", id);
 
         setUserRole(role);
         toast.success("Login Successfully!");

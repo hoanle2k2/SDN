@@ -34,23 +34,21 @@ const EditBlog = () => {
   const validateForm = (values) => {
     const errors = {};
 
-        if (!values.Title) {
-            errors.Title = 'Title can not be blank.';
-        } else if (values.Title.length < 5) {
-            errors.Title = 'Title must be at least 5 characters long.';
-        }
-        else if (!values.Content) {
-            errors.Content = ' Content can not be blank.';
-        }
-        else if (values.Content.length < 10) {
-            errors.Content = 'Content must be at least 10 characters long.';
-        }
-        //   if (!values.TopicID) {
-        //     errors.TopicID = 'Please select a TopicID.';
-        //   }
-        if (!values.TopicID || values.TopicID === 'TopicID') {
-            errors.TopicID = 'You must select a Topic';
-        }
+    if (!values.Title) {
+      errors.Title = "Title can not be blank.";
+    } else if (values.Title.length < 5) {
+      errors.Title = "Title must be at least 5 characters long.";
+    } else if (!values.Content) {
+      errors.Content = " Content can not be blank.";
+    } else if (values.Content.length < 10) {
+      errors.Content = "Content must be at least 10 characters long.";
+    }
+    //   if (!values.TopicID) {
+    //     errors.TopicID = 'Please select a TopicID.';
+    //   }
+    if (!values.TopicID || values.TopicID === "TopicID") {
+      errors.TopicID = "You must select a Topic";
+    }
 
     return errors;
   };
@@ -81,7 +79,7 @@ const EditBlog = () => {
         },
       });
       toast.success("Create Successfully!");
-    
+
       //console.log("res from form", res);
     } catch (error) {
       console.log(error);
@@ -91,7 +89,7 @@ const EditBlog = () => {
   return (
     <div className="mt-26">
       <div className="row">
-        <div class="col-md-10 offset-md-1 col-xs-12">
+        <div className="col-md-10 offset-md-1 col-xs-12">
           <Formik initialValues={initialValues} onSubmit={handleSubmit} validate={validateForm}>
             {(formik) => (
               <Form style={fieldStyle}>
@@ -136,7 +134,7 @@ const EditBlog = () => {
                   <Field as="select" id="selectedOption" name="TopicID" className="form-select">
                     <option value="">Select Topic</option>
                     {topic.map((topic) => (
-                      <option value={topic.TopicName}>{topic.TopicName}</option>
+                      <option value={topic._id}>{topic.TopicName}</option>
                     ))}
                   </Field>
                   <h5>
