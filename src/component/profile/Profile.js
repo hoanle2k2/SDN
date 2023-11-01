@@ -124,13 +124,13 @@ export default function Profile() {
                         </div>
                       </div>
                     </div>
-                    <Link to={`/blogDetail/${post._id}`} className="titles1">
+                    <Link to={"/blogDetail/:blogid"} className="titles1">
                       {post.Title}
                     </Link>
-                    <Link to={`/blogDetail/${post._id}`} className="article-description">
+                    <Link to={"/blogDetail/:blogid"} className="article-description">
                       {post.Content}
                     </Link>
-                    <Link to={`/blogDetail/${post._id}`} className="readm">
+                    <Link to={"/blogDetail/:blogid"} className="readm">
                       Read more...
                     </Link>
                   </div>
