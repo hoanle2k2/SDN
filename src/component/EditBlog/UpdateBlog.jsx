@@ -138,7 +138,7 @@ const UpdateBlog = () => {
                 (
                     <div className="mt-26">
                         <div className="row">
-                            <div class="col-md-10 offset-md-1 col-xs-12">
+                            <div className="col-md-10 offset-md-1 col-xs-12">
                                 <Formik initialValues={initialValues} onSubmit={handleSubmit} validate={validateForm}>
                                     {(formik) => (
                                         <Form style={fieldStyle}>
