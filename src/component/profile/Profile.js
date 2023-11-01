@@ -39,14 +39,14 @@ export default function Profile() {
         const fetchUserPosts = async () => {
             try {
                 const token = localStorage.getItem('accessToken');
-        
+
                 if (token) {
                     const response = await axios.get('http://localhost:5000/blog/user', {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
-        
+
                     const userPostsData = response.data.userBlogs; // Dữ liệu bài viết đã được lọc
                     setUserPosts(userPostsData);
                 }
@@ -117,27 +117,32 @@ export default function Profile() {
                             </div>
                             <p>No articles are here... yet.</p>
                         </div>
-                        <div
-                            className="tab-pane fade"
-                            id="pills-profile"
-                            role="tabpanel"
-                            aria-labelledby="pills-profile-tab"
-                        >
+                        <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                             {userPosts.length > 0 ? (
                                 userPosts.map((post, index) => (
                                     <div key={index} className="article-preview border-top border-bottom">
                                         <div className="artical-meta">
                                             <div className="author">
                                                 <img className="rounded-circle" src={user.avatar} alt="avatar" />
-                                                <div className="info">                                      
+                                                <div className="info">
                                                     <Link to="/profile">{user.username}</Link>
                                                     <p>{post.createdAt}</p>
                                                 </div>
+                                                <div className="publicStatus">
+                                                    <p className={post.public ? 'true-text' : 'false-text'}>
+                                                        Public Status: {post.public ? 'True' : 'False'}
+                                                    </p>
+                                                </div>
+
                                             </div>
-                                          
+
+                                            <div className="actions">
+                                                <button className="btn btn-primary">Edit</button>
+                                                <button className="btn btn-danger">Request Public</button>
+                                            </div>
                                         </div>
-                                        <Link to={'/blogDetail/:blogid'} className="titles1" >{post.Title}</Link>
-                                        <Link to={'/blogDetail/:blogid'} className="article-description" >{post.Content}</Link>
+                                        <Link to={'/blogDetail/:blogid'} className="titles1">{post.Title}</Link>
+                                        <Link to={'/blogDetail/:blogid'} className="article-description">{post.Content}</Link>
                                         <Link to={'/blogDetail/:blogid'} className="readm">Read more...</Link>
                                     </div>
                                 ))
@@ -145,6 +150,7 @@ export default function Profile() {
                                 <p>No posts available yet.</p>
                             )}
                         </div>
+
                     </div>
                 </div>
             </div>
