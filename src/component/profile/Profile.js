@@ -122,6 +122,16 @@ export default function Profile() {
                           <Link to="/profile">{user.username}</Link>
                           <p>{post.createdAt}</p>
                         </div>
+                        <div className="publicStatus">
+                          <p className={post.public ? "true-text" : "false-text"}>
+                            Public Status: {post.public ? "True" : "False"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="actions">
+                        <button className="btn btn-primary">Edit</button>
+                        <button className="btn btn-danger">Request Public</button>
                       </div>
                     </div>
                     <Link to={`/blogDetail/${post._id}`} className="titles1">
