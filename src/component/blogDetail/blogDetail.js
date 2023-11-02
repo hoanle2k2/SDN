@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import env from "../../staticEnvVar";
 import "./BlogDetail.css";
+import { toast } from "react-toastify";
 
 export default function BlogDetail() {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ export default function BlogDetail() {
   const [showReplyInput, setShowReplyInput] = useState(false);
   var alertStatus = false;
   const token = localStorage.getItem("accessToken");
+  const role = localStorage.getItem("Role");
+
+  const [showAllowPublicButton, setShowAllowPublicButton] = useState(false);
 
   useEffect(() => {
     alertStatus = true;
@@ -29,6 +33,10 @@ export default function BlogDetail() {
         setBlogDetailState(res?.data?.blogDetail);
         setFavorite(res?.data?.favOfUser);
         setBookmark(res?.data?.bookMarkOfUser);
+
+        if (role === "CONTENT_MANAGER") {
+          setShowAllowPublicButton(true);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -39,6 +47,26 @@ export default function BlogDetail() {
         navigate("/");
       });
   }, []);
+
+  const handleAllowPublic = () => {
+    const headers = {
+      authorization: `token ${token}`,
+    };
+      axios
+      .post(`/contentmanager/publicBlog/${blogid}`, null, {
+        headers: headers,
+      })
+      .then((res) => {
+        console.log("Bài viết đã được public thành công.");
+        toast.success("Public Successfully!");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Lỗi khi public bài viết:", err);
+      });
+  };
+  
+
   const reactBlog = (id, type, status) => {
     const userid = localStorage.getItem("userID");
     if (type === env.type_of_react.fav) {
@@ -80,12 +108,16 @@ export default function BlogDetail() {
       <div className="col-1"></div>
       <div className="col-11">
         <div className="blog-detail row mt-3 d-flex align-items-center">
-          <h1 className="blog__title">{blogDetailState?.Title}</h1>
+          <div className="blog_detail">
+            <h1 className="blog__title">{blogDetailState?.Title}</h1>
+            {showAllowPublicButton && (
+              <button className="btn-allow-public" onClick={handleAllowPublic}>Allow Public</button>
+            )}
+          </div>
           <div>
             <div className="blog__topic ">{blogDetailState?.topic?.TopicName}</div>
           </div>
           <div className="author-info col-6 d-flex align-items-center">
-            {/* Phần avatar và tên tác giả */}
             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Author Avatar" className="avatar" />
             <div className="author-name ml-3">
               <p>UserName</p>
@@ -95,7 +127,6 @@ export default function BlogDetail() {
             </div>
           </div>
           <div className="blog-meta col-6 ">
-            {/* Phần thông tin bài viết */}
             <p>Đã đăng vào {blogDetailState?.createdAt}</p>
             <div className="blog_view">
               <p>

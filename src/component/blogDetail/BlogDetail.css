@@ -2,25 +2,32 @@
   width: 8%;
   border-radius: 50%;
 }
+
 .total {
   border: 1px solid black;
 }
+
 .author-name {
   display: inline;
 }
+
 .athor-info {
   display: flex;
 }
+
 .blog_view {
   display: flex;
 }
+
 .blog_view p {
   margin-right: 20px;
 }
+
 .blog-detail {
   margin-bottom: 50px;
 }
-.blog__topic{
+
+.blog__topic {
   background-color: rgb(229, 229, 229);
   font-size: large;
   border-radius: 10px;
@@ -28,33 +35,38 @@
   padding: 5px 10px;
   font-weight: bold;
 }
+
 .blog__content {
   width: 90%;
   margin-bottom: 5%;
 }
+
 .blogdetail-option .option-column {
   border-radius: 10px;
   padding: 1rem 0;
   background-color: rgb(229, 229, 229);
 }
+
 .blogdetail-option i {
   font-size: 1.8rem;
   margin: 0 0 2% 0;
 }
-.fa-thumbs-up {
-}
+
 .avatar__comment {
   width: 40px;
 }
+
 .blog__comment h1 {
   font-size: 30px;
 }
+
 .blog__comment input {
   margin-top: 20px;
   padding: 5px 5px 80px;
   width: 60%;
   margin-bottom: 20px;
 }
+
 .btncmt {
   padding: 10px;
   font-size: 16px;
@@ -62,24 +74,51 @@
   border-radius: 10px;
   color: white;
 }
+
 .avatarUser {
   width: 35px;
 }
+
 .commentUser {
   margin-top: 40px;
 }
+
 .commentUser img {
   margin-right: 1rem;
 }
+
 .commentU {
   width: 50%;
 }
+
 #myButton {
-  border: none; /* Loại bỏ viền của button */
-  background-color: transparent; /* Đặt nền của button là trong suốt */
-  padding: 0; /* Xóa khoảng cách giữa icon và viền của button */
+  border: none;
+  /* Loại bỏ viền của button */
+  background-color: transparent;
+  /* Đặt nền của button là trong suốt */
+  padding: 0;
+  /* Xóa khoảng cách giữa icon và viền của button */
 }
 
 #myButton i {
-  border: none; /* Loại bỏ viền của icon */
+  border: none;
+  /* Loại bỏ viền của icon */
+}
+
+.blog_detail {
+  display: flex;
+  align-items: center;
+}
+
+.blog__title {
+  flex: 1;
+}
+
+.btn-allow-public {
+  margin-right: 30%;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  color: #fff;
+  background-color: #5CB85C;
+  border-color: #5CB85C;
 }
