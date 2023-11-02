@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
-import { EditorState, ContentState, convertToRaw, Modifier, convertFromHTML, convertFromRaw } from "draft-js";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { EditorState, convertToRaw} from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import { Editor } from "react-draft-wysiwyg";
 import "./EditBlog.css";
@@ -8,20 +8,32 @@ import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { convertToHTML } from 'draft-convert';
+import { useNavigate } from "react-router-dom";
 
 const EditBlog = () => {
   const fieldStyle = {
     margin: "10px",
     padding: "5px",
   };
+  const navigate = useNavigate();
+
 
   const [content, setContent] = useState("");
   const [topic, setTopic] = useState([]);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [convertedContent, setConvertedContent] = useState(null);
+
+  useEffect(() => {
+    let html = convertToHTML(editorState.getCurrentContent());
+    setConvertedContent(html);
+    console.log("convert", html);
+  }, [editorState]);
+
   const handleEditorChange = (state, formik) => {
     setEditorState(state);
     if (formik) {
-      formik.setFieldValue("Content", state.getCurrentContent().getPlainText());
+      formik.setFieldValue("Content", convertedContent);
     }
   };
 
@@ -31,23 +43,21 @@ const EditBlog = () => {
 
   const token = localStorage.getItem("accessToken");
 
+
   const validateForm = (values) => {
     const errors = {};
 
     if (!values.Title) {
-      errors.Title = "Title can not be blank.";
+      errors.Title = "Tiêu đề không được để trống.";
     } else if (values.Title.length < 5) {
-      errors.Title = "Title must be at least 5 characters long.";
+      errors.Title = "Tiêu đề phải dài ít nhất 5 ký tự.";
     } else if (!values.Content) {
-      errors.Content = " Content can not be blank.";
-    } else if (values.Content.length < 10) {
-      errors.Content = "Content must be at least 10 characters long.";
+      errors.Content = " Nội dung không được để trống";
+    } else if (values.Content.length < 150) {
+      errors.Content = "Nội dung bài viết phải dài ít nhất 150 ký tự.";
     }
-    //   if (!values.TopicID) {
-    //     errors.TopicID = 'Please select a TopicID.';
-    //   }
     if (!values.TopicID || values.TopicID === "TopicID") {
-      errors.TopicID = "You must select a Topic";
+      errors.TopicID = "Bạn phải chọn chủ đề cho bài viết";
     }
 
     return errors;
@@ -78,9 +88,8 @@ const EditBlog = () => {
           authorization: `token ${token}`,
         },
       });
-      toast.success("Create Successfully!");
-
-      //console.log("res from form", res);
+      toast.success("Tạo thành công bài viết !");
+      navigate("/profile");
     } catch (error) {
       console.log(error);
     }
@@ -94,21 +103,17 @@ const EditBlog = () => {
             {(formik) => (
               <Form style={fieldStyle}>
                 <div className="my-2">
-                  <Field type="text" placeholder="Blog Title" name="Title" className="form-control form-control-lg" />
+                  
+                  <Field type="text" placeholder="Tiêu đề bài viết" name="Title" className="form-control form-control-lg" />
                   <h5>
                     {" "}
                     <ErrorMessage style={{ color: "red" }} name="Title" component="div" />
                   </h5>
                 </div>
                 <div className="my-2 form-control form-control-lg">
-                  {/* <Editor
-                                        editorState={editorState}
-                                        onEditorStateChange={(state) => handleEditorChange(state, formik)}
-                                        placeholder="Write your blog (in markdown)"
-                                        name="Content"
-                                    /> */}
                   <Editor
                     editorState={editorState}
+                    placeholder="Bạn đang nghĩ gì...."
                     onEditorStateChange={(state) => handleEditorChange(state, formik)}
                     toolbar={{
                       options: ["inline", "blockType", "fontSize", "list", "textAlign", "link", "image", "history"],
@@ -125,14 +130,16 @@ const EditBlog = () => {
                         options: ["unordered", "ordered"],
                       },
                     }}
-                  />
+                  >
+                    { }
+                  </Editor>
                   <h5>
                     <ErrorMessage style={{ color: "red" }} name="Content" component="div" />
                   </h5>
                 </div>
                 <div className="my-2">
                   <Field as="select" id="selectedOption" name="TopicID" className="form-select">
-                    <option value="">Select Topic</option>
+                    <option value="">Chọn chủ đề</option>
                     {topic.map((topic) => (
                       <option value={topic._id}>{topic.TopicName}</option>
                     ))}
@@ -143,7 +150,7 @@ const EditBlog = () => {
                 </div>
                 <div className="d-flex justify-content-end">
                   <button className=" sb btn btn-success btn-lg" type="submit">
-                    Submit
+                    Đăng bài
                   </button>
                 </div>
               </Form>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './profile.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Profile() {
@@ -10,7 +10,7 @@ export default function Profile() {
         avatar: '',
     });
     const [userPosts, setUserPosts] = useState([]);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -93,6 +93,9 @@ export default function Profile() {
           console.error('Error requesting public:', error);
       }
   };
+  const handleOnClick = (id) => {
+    navigate(`/updateBlog/${id}`);
+  };
 
     return (
         <div>
@@ -170,7 +173,7 @@ export default function Profile() {
                                                 </div>
                                             </div>
                                             <div className="actions">
-                                                <button className="btn btn-primary">Edit</button>
+                                                <button className="btn btn-primary" onClick={()=>{handleOnClick(post._id)}}>Edit</button>
                                                 {post.PublicRequest ? (
                                                     <button className="btn btn-secondary" style={{ display: 'none' }}></button>
                                                 ) : (

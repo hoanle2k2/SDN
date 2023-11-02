@@ -1,14 +1,13 @@
 import { React, useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
-import { EditorState, ContentState, convertToRaw, Modifier, convertFromHTML, convertFromRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { EditorState, ContentState, convertFromHTML } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "./EditBlog.css";
 import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { useNavigate, Outlet, NavLink, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 
 
@@ -19,37 +18,32 @@ const UpdateBlog = () => {
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(true);
 
-    const { blogid } = location.state // ==  location.state.article
-    console.log("location", blogid);
+    const { id } = useParams() 
+    console.log("location", id);
 
     useEffect(() => {
         getData()
 
     }, []);
     const getData = async () => {
-        console.log(blogid)
-        const res = await Axios.get(`/blog/${blogid}`, {
+        console.log(id)
+        const res = await Axios.get(`/blog/${id}`, {
             headers: {
                 authorization: `token ${token}`,
             },
         })
         setUpdate(res.data.blogDetail);
-            setIsLoading(false);
+        setIsLoading(false);
+        const contentDataState = ContentState.createFromBlockArray(convertFromHTML(res.data.blogDetail?.Content));
+        const editorDataState = EditorState.createWithContent(contentDataState);
+        setEditorState(editorDataState);
 
         console.log("resssssssss", res.data.blogDetail);
-
-
-        // .then((res) => {
-        //     console.log(res.data);
-        //     setUpdate(res?.data);
-        //     console.log("sdsdad", update);
-        // })
-        // .catch((err) => {
-        //     console.log(err);
-        //     //navigate("/");
-        // });
     }
     console.log("updateData", update);
+
+    console.log("Content" + update?.Content);
+    console.log("Topic id :" + update?.TopicID);
 
 
     const fieldStyle = {
@@ -58,8 +52,12 @@ const UpdateBlog = () => {
     };
 
     const [content, setContent] = useState("");
-    const [topic, setTopic] = useState([]);
-    const [editorState, setEditorState] = useState();
+    const [topic, setTopic] = useState(update?.topic);
+    console.log("update");
+    console.log(update);
+    console.log("topic");
+    console.log(topic);
+    const [editorState, setEditorState] = useState(update?.Content);
     const handleEditorChange = (state, formik) => {
         setEditorState(state);
         if (formik) {
@@ -67,37 +65,30 @@ const UpdateBlog = () => {
         }
     };
 
-    // useEffect(() => {
-    //     setContent(draftToHtml(convertToRaw(editorState.getCurrentContent())));
-    // }, [editorState]);
-
     const token = localStorage.getItem("accessToken");
 
     const validateForm = (values) => {
         const errors = {};
-
         if (!values.Title) {
-            errors.Title = 'Title can not be blank.';
+          errors.Title = "Tiêu đề không được để trống.";
         } else if (values.Title.length < 5) {
-            errors.Title = 'Title must be at least 5 characters long.';
+          errors.Title = "Tiêu đề phải dài ít nhất 5 ký tự.";
+        } else if (!values.Content) {
+          errors.Content = " Nội dung không được để trống";
+        } else if (values.Content.length < 150) {
+          errors.Content = "Nội dung bài viết phải dài ít nhất 150 ký tự.";
         }
-        else if (!values.Content) {
-            errors.Content = ' Content can not be blank.';
+        if (!values.TopicID || values.TopicID === "TopicID") {
+          errors.TopicID = "Bạn phải chọn chủ đề cho bài viết";
         }
-        else if (values.Content.length < 10) {
-            errors.Content = 'Content must be at least 10 characters long.';
-        }
-        if (!values.TopicID || values.TopicID === 'TopicID') {
-            errors.TopicID = 'You must select a Topic';
-        }
-
         return errors;
-    };
+      };
 
     const initialValues = {
         Title: update?.Title,
         Content: update?.Content,
         TopicID: update?.TopicID,
+
     };
 
     useEffect(() => {
@@ -106,8 +97,9 @@ const UpdateBlog = () => {
                 authorization: `token ${token}`,
             },
         }).then((data) => {
-            // console.log(data);
+            console.log(data);
             setTopic(data.data.data);
+
         });
     }, []);
 
@@ -119,13 +111,14 @@ const UpdateBlog = () => {
                     authorization: `token ${token}`,
                 },
             });
-            toast.success("Update Successfully!");
-
-            //console.log("res from form", res);
+            toast.success("Cập nhật bài viết thành công !");
+            navigate("/profile")
         } catch (error) {
             console.log(error);
         }
     };
+
+
 
     return (
         <>{
@@ -143,21 +136,16 @@ const UpdateBlog = () => {
                                     {(formik) => (
                                         <Form style={fieldStyle}>
                                             <div className="my-2">
-                                                <Field type="text" placeholder="Blog Title" name="Title" className="form-control form-control-lg" />
+                                                <Field type="text" placeholder="Tiêu đề bài viết" name="Title" className="form-control form-control-lg" />
                                                 <h5>
-                                                    {" "}
+                                                    
                                                     <ErrorMessage style={{ color: "red" }} name="Title" component="div" />
                                                 </h5>
                                             </div>
                                             <div className="my-2 form-control form-control-lg">
-                                                {/* <Editor
-                                        editorState={editorState}
-                                        onEditorStateChange={(state) => handleEditorChange(state, formik)}
-                                        placeholder="Write your blog (in markdown)"
-                                        name="Content"
-                                    /> */}
                                                 <Editor
-                                                    editorState={editorState}
+                                                    defaultEditorState={editorState}
+                                                    placeholder="Bạn đang nghĩ gì..."
                                                     onEditorStateChange={(state) => handleEditorChange(state, formik)}
                                                     toolbar={{
                                                         options: ["inline", "blockType", "fontSize", "list", "textAlign", "link", "image", "history"],
@@ -174,16 +162,24 @@ const UpdateBlog = () => {
                                                             options: ["unordered", "ordered"],
                                                         },
                                                     }}
-                                                />
+                                                >
+                                                </Editor>
                                                 <h5>
                                                     <ErrorMessage style={{ color: "red" }} name="Content" component="div" />
                                                 </h5>
                                             </div>
                                             <div className="my-2">
-                                                <Field as="select" id="selectedOption" name="TopicID" className="form-select">
-                                                    <option value="">Select Topic</option>
-                                                    {topic.map((topic) => (
-                                                        <option value={topic.TopicName}>{topic.TopicName}</option>
+                                                <Field as="select" id="selectedOption" name="TopicID" value={update?.TopicName} className="form-select">
+
+                                                    {topic?.map((topicItem) => (
+                                                        <Field
+                                                            as="option"
+                                                            key={topicItem.TopicID}
+                                                            value={topicItem.TopicName}
+                                                            selected={update?.TopicID === topicItem?._id ? true : false}
+                                                        >
+                                                            {topicItem.TopicName}
+                                                        </Field>
                                                     ))}
                                                 </Field>
                                                 <h5>
