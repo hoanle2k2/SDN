@@ -52,7 +52,7 @@ function App() {
             <Route path="topics" element={<ManageTopic />} />
           </Route>
           <Route path="/blogDetail/:blogid" element={<BlogDetail/>}></Route>
-          <Route path="/updateBlog" element={<UpdateBlog/>}></Route>
+          <Route path="/updateBlog/:id" element={<UpdateBlog/>}></Route>
 
         </Routes>
 

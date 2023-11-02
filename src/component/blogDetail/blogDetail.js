@@ -75,10 +75,6 @@ export default function BlogDetail() {
     setShowOptions(false);
   };
 
-  const handleOnClick = () => {
-    navigate(`/updateBlog/`, { state: { blogid } });
-  };
-
   return (
     <div className="container-fluid row">
       <div className="col-1"></div>
