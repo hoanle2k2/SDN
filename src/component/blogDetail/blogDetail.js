@@ -52,7 +52,7 @@ export default function BlogDetail() {
     const headers = {
       authorization: `token ${token}`,
     };
-      axios
+    axios
       .post(`/contentmanager/publicBlog/${blogid}`, null, {
         headers: headers,
       })
@@ -65,16 +65,35 @@ export default function BlogDetail() {
         console.error("Lỗi khi public bài viết:", err);
       });
   };
-  
 
-  const reactBlog = (id, type, status) => {
-    const userid = localStorage.getItem("userID");
-    if (type === env.type_of_react.fav) {
-      setFavorite(status);
-    }
-    if (type === env.type_of_react.bookmark) {
-      setBookmark(status);
-    }
+  const reactBlog = (blogid, type, status) => {
+    console.log(token);
+    axios
+      .post(
+        `/blog/react`,
+        {
+          blogid,
+          type,
+        },
+        {
+          headers: {
+            authorization: `token ${token}`,
+          }
+        }
+      )
+      .then((res) => {
+        console.log("React for blog with type " + type);
+        toast.success(res.data.message);
+        if (type === env.type_of_react.fav) {
+          setFavorite(status);
+        }
+        if (type === env.type_of_react.bookmark) {
+          setBookmark(status);
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi khi public bài viết:", err);
+      });
   };
 
   // Hàm để hiển thị menu tùy chọn khi nhấp vào biểu tượng ba chấm
@@ -111,7 +130,9 @@ export default function BlogDetail() {
           <div className="blog_detail">
             <h1 className="blog__title">{blogDetailState?.Title}</h1>
             {showAllowPublicButton && (
-              <button className="btn-allow-public" onClick={handleAllowPublic}>Allow Public</button>
+              <button className="btn-allow-public" onClick={handleAllowPublic}>
+                Allow Public
+              </button>
             )}
           </div>
           <div>
