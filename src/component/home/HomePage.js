@@ -52,6 +52,7 @@ const HomePage = ({ search }) => {
           topic !== "" ? topic : "none"
         }/${sortBy}/${orderBy}`;
         const response = await axios.get(apiUrl);
+        console.log(response);
         setBlogList(response.data.data);
         setArticlesCount(response.data.count);
         search = "";
