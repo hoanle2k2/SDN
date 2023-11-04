@@ -1,7 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { EditorState, convertToRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
+import { EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "./EditBlog.css";
 import Axios from "axios";
@@ -16,12 +15,12 @@ const EditBlog = () => {
     margin: "10px",
     padding: "5px",
   };
-  const navigate = useNavigate();
-
-  const [content, setContent] = useState("");
+  
   const [topic, setTopic] = useState([]);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [convertedContent, setConvertedContent] = useState(null);
+  const token = localStorage.getItem("accessToken");
+  const navigate = useNavigate();
 
   useEffect(() => {
     let html = convertToHTML(editorState.getCurrentContent());
@@ -36,12 +35,7 @@ const EditBlog = () => {
     }
   };
 
-  useEffect(() => {
-    setContent(draftToHtml(convertToRaw(editorState.getCurrentContent())));
-  }, [editorState]);
-
-  const token = localStorage.getItem("accessToken");
-
+  
   const validateForm = (values) => {
     const errors = {};
 
