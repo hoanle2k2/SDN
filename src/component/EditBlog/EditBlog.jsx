@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { EditorState, convertToRaw} from "draft-js";
+import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import { Editor } from "react-draft-wysiwyg";
 import "./EditBlog.css";
@@ -8,7 +8,7 @@ import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { convertToHTML } from 'draft-convert';
+import { convertToHTML } from "draft-convert";
 import { useNavigate } from "react-router-dom";
 
 const EditBlog = () => {
@@ -17,7 +17,6 @@ const EditBlog = () => {
     padding: "5px",
   };
   const navigate = useNavigate();
-
 
   const [content, setContent] = useState("");
   const [topic, setTopic] = useState([]);
@@ -42,7 +41,6 @@ const EditBlog = () => {
   }, [editorState]);
 
   const token = localStorage.getItem("accessToken");
-
 
   const validateForm = (values) => {
     const errors = {};
@@ -103,8 +101,12 @@ const EditBlog = () => {
             {(formik) => (
               <Form style={fieldStyle}>
                 <div className="my-2">
-                  
-                  <Field type="text" placeholder="Tiêu đề bài viết" name="Title" className="form-control form-control-lg" />
+                  <Field
+                    type="text"
+                    placeholder="Tiêu đề bài viết"
+                    name="Title"
+                    className="form-control form-control-lg"
+                  />
                   <h5>
                     {" "}
                     <ErrorMessage style={{ color: "red" }} name="Title" component="div" />
@@ -131,7 +133,7 @@ const EditBlog = () => {
                       },
                     }}
                   >
-                    { }
+                    {}
                   </Editor>
                   <h5>
                     <ErrorMessage style={{ color: "red" }} name="Content" component="div" />

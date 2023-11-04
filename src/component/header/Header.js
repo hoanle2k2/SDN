@@ -107,7 +107,7 @@ const Header = ({handleSubmit}) => {
             <div className="profile-list">
               {userRole === "ADMIN" && (
                 <div className="narbar-list">
-                  <div>Quản trị viên</div>
+                  <Link to="/admin/dashboard">Quản trị viên</Link>
                   <div onClick={handleLogout}>Đăng xuất</div>
                 </div>
               )}

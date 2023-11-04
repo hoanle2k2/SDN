@@ -17,10 +17,13 @@ export default function BlogDetail() {
   const token = localStorage.getItem("accessToken");
   const role = localStorage.getItem("Role");
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const [showAllowPublicButton, setShowAllowPublicButton] = useState(false);
 
   useEffect(() => {
     alertStatus = true;
+    setIsLoading(true);
     console.log("blogid", blogid);
     axios
       .get(`/blog/${blogid}`, {
@@ -29,25 +32,31 @@ export default function BlogDetail() {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setBlogDetailState(res?.data?.blogDetail);
         setFavorite(res?.data?.favOfUser);
         setBookmark(res?.data?.bookMarkOfUser);
 
-        if (role === "CONTENT_MANAGER") {
+        if (role === "CONTENT_MANAGER" && res?.data?.blogDetail?.PublicStatus === false) {
           setShowAllowPublicButton(true);
         }
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
         if (alertStatus) {
           alertStatus = false;
-          alert("Error: " + err.message);
+          alert("Error: " + err.response.data.message);
         }
         navigate("/");
       });
   }, []);
-
+  if (isLoading) {
+    return (
+      <div className="text-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
   const handleAllowPublic = () => {
     const headers = {
       authorization: `token ${token}`,
@@ -59,6 +68,7 @@ export default function BlogDetail() {
       .then((res) => {
         console.log("Bài viết đã được public thành công.");
         toast.success("Public Successfully!");
+        setShowAllowPublicButton(false);
         navigate("/");
       })
       .catch((err) => {
@@ -67,7 +77,6 @@ export default function BlogDetail() {
   };
 
   const reactBlog = (blogid, type, status) => {
-    console.log(token);
     axios
       .post(
         `/blog/react`,
@@ -78,7 +87,7 @@ export default function BlogDetail() {
         {
           headers: {
             authorization: `token ${token}`,
-          }
+          },
         }
       )
       .then((res) => {
@@ -164,95 +173,99 @@ export default function BlogDetail() {
         </div>
         <div className="blog__content row">
           <div className="blogdetail-option col-1">
-            <div className="option-column">
-              <div className="d-flex justify-content-center">
-                {fav ? (
-                  <div>
-                    <i className="bi-heart-fill" onClick={() => reactBlog(blogid, env.type_of_react.fav, false)}></i>
-                  </div>
-                ) : (
-                  <div>
-                    <i className="bi-heart" onClick={() => reactBlog(blogid, env.type_of_react.fav, true)}></i>
-                  </div>
-                )}
+            {!showAllowPublicButton && (
+              <div className="option-column">
+                <div className="d-flex justify-content-center">
+                  {fav ? (
+                    <div>
+                      <i className="bi-heart-fill" onClick={() => reactBlog(blogid, env.type_of_react.fav, false)}></i>
+                    </div>
+                  ) : (
+                    <div>
+                      <i className="bi-heart" onClick={() => reactBlog(blogid, env.type_of_react.fav, true)}></i>
+                    </div>
+                  )}
+                </div>
+                <div className="d-flex justify-content-center">
+                  {bookmark ? (
+                    <div>
+                      <i
+                        className="bi bi-bookmark-fill"
+                        onClick={() => reactBlog(blogid, env.type_of_react.bookmark, false)}
+                      ></i>{" "}
+                    </div>
+                  ) : (
+                    <div>
+                      <i
+                        className="bi bi-bookmark"
+                        onClick={() => reactBlog(blogid, env.type_of_react.bookmark, true)}
+                      ></i>{" "}
+                    </div>
+                  )}
+                </div>
+                <div className="d-flex justify-content-center">
+                  <i className="bi bi-flag-fill" onClick={() => reactBlog(blogid, env.type_of_react.report, null)}></i>
+                </div>
               </div>
-              <div className="d-flex justify-content-center">
-                {bookmark ? (
-                  <div>
-                    <i
-                      className="bi bi-bookmark-fill"
-                      onClick={() => reactBlog(blogid, env.type_of_react.bookmark, false)}
-                    ></i>{" "}
-                  </div>
-                ) : (
-                  <div>
-                    <i
-                      className="bi bi-bookmark"
-                      onClick={() => reactBlog(blogid, env.type_of_react.bookmark, true)}
-                    ></i>{" "}
-                  </div>
-                )}
-              </div>
-              <div className="d-flex justify-content-center">
-                <i className="bi bi-flag-fill" onClick={() => reactBlog(blogid, env.type_of_react.report, null)}></i>
-              </div>
-            </div>
+            )}
           </div>
           <div className="col-11">{blogDetailState?.Content}</div>
         </div>
-        <div className="blog__comment">
-          <h1>Bình luận</h1>
-          <div className="avt__author">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-              alt="Author Avatar"
-              className="avatar__comment"
-            />
-          </div>
-          <input className="mt-1" type="area" placeholder="Viết bình luận" />
-          <div className="btn_submit">
-            <button className="btncmt">Bình luận</button>
-          </div>
-          <div className="commentUser">
-            <div className="row">
-              <div className="user_infor col-6 d-flex align-items-center">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                  alt="User Avatar"
-                  className="avatarUser"
-                />
-                <div className="userName">
-                  <p>Username</p>
-                  <span>24/4//2023 9:00 Sa</span>
+        {!showAllowPublicButton && (
+          <div className="blog__comment">
+            <h1>Bình luận</h1>
+            <div className="avt__author">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                alt="Author Avatar"
+                className="avatar__comment"
+              />
+            </div>
+            <input className="mt-1" type="area" placeholder="Viết bình luận" />
+            <div className="btn_submit">
+              <button className="btncmt">Bình luận</button>
+            </div>
+            <div className="commentUser">
+              <div className="row">
+                <div className="user_infor col-6 d-flex align-items-center">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    alt="User Avatar"
+                    className="avatarUser"
+                  />
+                  <div className="userName">
+                    <p>Username</p>
+                    <span>24/4//2023 9:00 Sa</span>
+                  </div>
+                </div>
+                <div className="commentAction col-6">
+                  <i className="fa fa-ellipsis-h" onClick={toggleOptions}></i>
+                  {showOptions && (
+                    <div className="commentOptions">
+                      <p onClick={deleteComment}>Xóa bình luận</p>
+                      <p onClick={reportComment}>Báo cáo</p>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="commentAction col-6">
-                <i className="fa fa-ellipsis-h" onClick={toggleOptions}></i>
-                {showOptions && (
-                  <div className="commentOptions">
-                    <p onClick={deleteComment}>Xóa bình luận</p>
-                    <p onClick={reportComment}>Báo cáo</p>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="commentU">
-              <p>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam dolorem libero debitis tempora vel
-                sunt natus quidem officiis architecto ipsum hic quasi consectetur quaerat optio, atque dicta ipsa
-                laboriosam labore ea nostrum laudantium ut. Similique voluptatibus sed est earum! Voluptatum!
-              </p>
-              <div className="reply-btn" onClick={toggleReplyInput}>
-                <p>Trả lời</p>
-                {showReplyInput && (
-                  <div className="reply-section">
-                    <input type="text" placeholder="Viết trả lời" />
-                  </div>
-                )}
+              <div className="commentU">
+                <p>
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam dolorem libero debitis tempora vel
+                  sunt natus quidem officiis architecto ipsum hic quasi consectetur quaerat optio, atque dicta ipsa
+                  laboriosam labore ea nostrum laudantium ut. Similique voluptatibus sed est earum! Voluptatum!
+                </p>
+                <div className="reply-btn" onClick={toggleReplyInput}>
+                  <p>Trả lời</p>
+                  {showReplyInput && (
+                    <div className="reply-section">
+                      <input type="text" placeholder="Viết trả lời" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
