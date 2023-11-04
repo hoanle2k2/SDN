@@ -7,17 +7,37 @@ import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { convertToHTML } from "draft-convert";
 
 const UpdateBlog = () => {
   const navigate = useNavigate();
-  // const { blogid } = useParams();
   const [update, setUpdate] = useState();
-  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
-
+  const token = localStorage.getItem("accessToken");
   const { id } = useParams();
-  console.log("location", id);
+  const [topic, setTopic] = useState(update?.topic);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [convertedContent, setConvertedContent] = useState(null);
+  
+  const fieldStyle = {
+    margin: "10px",
+    padding: "5px",
+  };
+
+  
+  useEffect(() => {
+    let html = convertToHTML(editorState.getCurrentContent());
+    setConvertedContent(html);
+    console.log("convert", html);
+  }, [editorState]);
+
+  const handleEditorChange = (state, formik) => {
+    setEditorState(state);
+    if (formik) {
+      formik.setFieldValue("Content", convertedContent);
+    }
+  };
 
   useEffect(() => {
     getData();
@@ -37,31 +57,6 @@ const UpdateBlog = () => {
 
     console.log("resssssssss", res.data.blogDetail);
   };
-  console.log("updateData", update);
-
-  console.log("Content" + update?.Content);
-  console.log("Topic id :" + update?.TopicID);
-
-  const fieldStyle = {
-    margin: "10px",
-    padding: "5px",
-  };
-
-  const [content, setContent] = useState("");
-  const [topic, setTopic] = useState(update?.topic);
-  console.log("update");
-  console.log(update);
-  console.log("topic");
-  console.log(topic);
-  const [editorState, setEditorState] = useState(update?.Content);
-  const handleEditorChange = (state, formik) => {
-    setEditorState(state);
-    if (formik) {
-      formik.setFieldValue("Content", state.getCurrentContent().getPlainText());
-    }
-  };
-
-  const token = localStorage.getItem("accessToken");
 
   const validateForm = (values) => {
     const errors = {};
