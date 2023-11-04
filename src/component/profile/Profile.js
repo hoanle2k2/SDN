@@ -59,6 +59,17 @@ export default function Profile() {
 
     fetchUserData();
   }, []);
+  function createMarkup(html) {
+    return { __html: html };
+  }
+  function truncateText(text, maxLength) {
+    if (text.length <= maxLength) {
+      return text;
+    } else {
+      return text.slice(0, maxLength) + '...';
+    }
+  }
+  
 
   const handleRequestPublic = async (postId) => {
     try {
@@ -192,9 +203,7 @@ export default function Profile() {
                     <Link to={`/blogDetail/${post._id}`} className="titles1">
                       {post.Title}
                     </Link>
-                    <Link to={`/blogDetail/${post._id}`} className="article-description">
-                      {post.Content}
-                    </Link>
+                    <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
                     <Link to={`/blogDetail/${post._id}`} className="readm">
                       Read more...
                     </Link>
@@ -203,6 +212,7 @@ export default function Profile() {
               ) : (
                 <p>No posts available yet.</p>
               )}
+
             </div>
           </div>
         </div>
