@@ -44,6 +44,7 @@ const Setting = () => {
       ...prevUser,
       [name]: value,
     }));
+    console.log(value);
   };
 
   const handleSubmit = async (event) => {
@@ -54,16 +55,16 @@ const Setting = () => {
       if (!token) {
         return;
       }
-
+      console.log("userdata",user.username);
       const response = await axios.put(
-        '/users',
+        'http://localhost:5000/accounts/userUpdate',
         {
-          user: {
-            username: user.username,
+         
+            usename: user.username,
             email: user.email,
             avatar: user.avatar,
            
-          },
+          
         },
         {
           headers: {
@@ -73,9 +74,10 @@ const Setting = () => {
       );
 
       if (response.status === 200) {
-        const userData = response.data.user;
+        const userData = response.data;
+       
         setUser({
-          username: userData.username,
+          username: userData.usename,
           email: userData.email,
           avatar: userData.avatar,
          
@@ -84,7 +86,7 @@ const Setting = () => {
         alert('Cập nhật thông tin người dùng thành công.');
         navigate('/profile', { state: { updatedAvatar: user.avatar } });
       } else {
-        // Xử lý các trạng thái phản hồi khác nếu cần
+      
       }
     } catch (error) {
       console.error('Lỗi khi cập nhật dữ liệu người dùng:', error);
@@ -131,14 +133,7 @@ const Setting = () => {
                     onChange={handleInputChange}
                   />
                 </fieldset>
-                <fieldset className="form-group">
-                  <input
-                    className="form-control form-control-lg"
-                    type="password"
-                    placeholder="New Password"
-                    id="passw"
-                  />
-                </fieldset>
+             
                 <button className="btnSt" type="submit">
                   Cập nhật cài đặt
                 </button>

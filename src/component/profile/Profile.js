@@ -1,100 +1,94 @@
-import React, { useEffect, useState } from "react";
-import "./profile.css";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import './profile.css';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Profile() {
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    avatar: "",
-  });
+  const [user, setUser] = useState({ });
   const [userPosts, setUserPosts] = useState([]);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const navigate = useNavigate();
 
+  const fetchUserData = async () => {
+    console.log("fetch user")
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      if (token) {
+        const response = await axios.get("http://localhost:5000/users", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const userData = response.data.data;
+        console.log(userData)
+        setUser({
+          username: userData.username,
+          email: userData.email,
+          avatar: userData.avatar,
+        });
+
+        // Lấy danh sách bài viết của người dùng sau khi lấy thông tin người dùng thành công
+        fetchUserPosts(token);
+
+        // Lấy danh sách bài viết đã đánh dấu
+        fetchBookmarkedPosts(token);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const fetchUserPosts = async (token) => {
+    try {
+      if (token) {
+        const response = await axios.get("http://localhost:5000/blog/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const userPostsData = response.data.userBlogs;
+        setUserPosts(userPostsData);
+      }
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+    }
+  };
+
+  const fetchBookmarkedPosts = async (token) => {
+    try {
+      if (token) {
+        const response = await axios.get("http://localhost:5000/blog/react", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const bookmarkedPostsData = response.data;
+        setBookmarkedPosts(bookmarkedPostsData);
+      }
+    } catch (error) {
+      console.error("Error fetching bookmarked posts:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-
-        if (token) {
-          const response = await axios.get("http://localhost:5000/users", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const userData = response.data.data;
-          console.log("userdata", userData);
-          setUser({
-            username: userData.username,
-            email: userData.email,
-            avatar: userData.avatar,
-          });
-
-          // Lấy danh sách bài viết của người dùng sau khi lấy thông tin người dùng thành công
-          fetchUserPosts(token);
-
-          // Lấy danh sách bài viết đã đánh dấu
-          fetchBookmarkedPosts(token);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    const fetchUserPosts = async (token) => {
-      try {
-        if (token) {
-          const response = await axios.get("http://localhost:5000/blog/user", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const userPostsData = response.data.userBlogs;
-          setUserPosts(userPostsData);
-          console.log(userPostsData);
-        }
-      } catch (error) {
-        console.error("Error fetching user posts:", error);
-      }
-    };
-
-
-    const fetchBookmarkedPosts = async (token) => {
-      try {
-        if (token) {
-          const response = await axios.get("http://localhost:5000/blog/react", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const bookmarkedPostsData = response.data;
-          console.log("Bookmarked Posts:", bookmarkedPostsData)
-          setBookmarkedPosts(bookmarkedPostsData);
-          console.log(bookmarkedPostsData);
-        }
-      } catch (error) {
-        console.error("Error fetching bookmarked posts:", error);
-      }
-    };
-
     fetchUserData();
   }, []);
-  function createMarkup(html) {
+
+  const createMarkup = (html) => {
     return { __html: html };
-  }
-  function truncateText(text, maxLength) {
+  };
+
+  const truncateText = (text, maxLength) => {
     if (text.length <= maxLength) {
       return text;
     } else {
       return text.slice(0, maxLength) + '...';
     }
-  }
-
+  };
 
   const handleRequestPublic = async (postId) => {
     try {
@@ -116,7 +110,6 @@ export default function Profile() {
             }
           );
 
-
           const updatedUserPosts = userPosts.map((post) => {
             if (post._id === postId) {
               return {
@@ -134,6 +127,7 @@ export default function Profile() {
       console.error("Error requesting public:", error);
     }
   };
+
   const handleOnClick = (id) => {
     navigate(`/updateBlog/${id}`);
   };
@@ -150,17 +144,17 @@ export default function Profile() {
             </Link>
           </div>
         </div>
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active nav-pills1" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Bài Viết Bookmark</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Bài viết của tôi</a>
-  </li>
- 
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">{bookmarkedPosts && bookmarkedPosts.length > 0 ? (
+        <ul className="nav nav-tabs" id="myTab" role="tablist">
+          <li className="nav-item">
+            <a className="nav-link active nav-pills1" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Bài Viết Bookmark</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Bài viết của tôi</a>
+          </li>
+        </ul>
+        <div className="tab-content" id="myTabContent">
+          <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            {bookmarkedPosts && bookmarkedPosts.length > 0 ? (
               bookmarkedPosts.map((post, index) => (
                 <div key={index} className="article-preview border-top border-bottom">
                   <div className="artical-meta">
@@ -170,9 +164,7 @@ export default function Profile() {
                         <Link to="/profile">{user.username}</Link>
                         <p>{post.createdAt}</p>
                       </div>
-
                     </div>
-
                   </div>
                   <Link to={`/blogDetail/${post._id}`} className="titles1">
                     {post.Title}
@@ -185,8 +177,10 @@ export default function Profile() {
               ))
             ) : (
               <p>Không có bài viết nào có sẵn.</p>
-            )}</div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab"> {userPosts.length > 0 ? (
+            )}
+          </div>
+          <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            {userPosts.length > 0 ? (
               userPosts.map((post, index) => (
                 <div key={index} className="article-preview border-top border-bottom">
                   <div className="artical-meta">
@@ -231,12 +225,10 @@ export default function Profile() {
               ))
             ) : (
               <p>Không có bài viết nào có sẵn.</p>
-            )}</div>
-  
-</div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
-
   );
-
 }
