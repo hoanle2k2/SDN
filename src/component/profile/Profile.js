@@ -12,7 +12,7 @@ export default function Profile() {
   const [userPosts, setUserPosts] = useState([]);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -94,7 +94,7 @@ export default function Profile() {
       return text.slice(0, maxLength) + '...';
     }
   }
- 
+
 
   const handleRequestPublic = async (postId) => {
     try {
@@ -146,21 +146,21 @@ export default function Profile() {
             <img src={user.avatar} alt="" />
             <h4>{user.username}</h4>
             <Link to="/setting">
-              <i className="fa fa-cog"></i> Edit Profile Settings
+              <i className="fa fa-cog"></i> Chỉnh sửa người dùng
             </Link>
           </div>
         </div>
-        <div className="articles-toggle">
-          <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-            <li className="nav-item" role="presentation">
-            <button className="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Bookmarked Post</button>
-            </li>
-            <li className="nav-item" role="presentation">
-            <button className="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">My Post</button>
-            </li>
-          </ul>
-          <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-            {bookmarkedPosts && bookmarkedPosts.length > 0 ? (
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active nav-pills1" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Bài Viết Bookmark</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Bài viết của tôi</a>
+  </li>
+ 
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">{bookmarkedPosts && bookmarkedPosts.length > 0 ? (
               bookmarkedPosts.map((post, index) => (
                 <div key={index} className="article-preview border-top border-bottom">
                   <div className="artical-meta">
@@ -179,16 +179,14 @@ export default function Profile() {
                   </Link>
                   <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
                   <Link to={`/blogDetail/${post._id}`} className="readm">
-                    Read more...
+                    Đọc thêm.
                   </Link>
                 </div>
               ))
             ) : (
-              <p>No favorite posts available yet.</p>
-            )}
-          </div>
-          <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-            {userPosts.length > 0 ? (
+              <p>Không có bài viết nào có sẵn.</p>
+            )}</div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab"> {userPosts.length > 0 ? (
               userPosts.map((post, index) => (
                 <div key={index} className="article-preview border-top border-bottom">
                   <div className="artical-meta">
@@ -200,7 +198,7 @@ export default function Profile() {
                       </div>
                       <div className="publicStatus">
                         <p className={post.PublicStatus ? "true-text" : "false-text"}>
-                          Public Status: {post.PublicStatus ? "Public" : "Private"}
+                          Trạng Thái Public: {post.PublicStatus ? "Public" : "Private"}
                         </p>
                       </div>
                     </div>
@@ -211,13 +209,13 @@ export default function Profile() {
                           handleOnClick(post._id);
                         }}
                       >
-                        Edit
+                        Sửa
                       </button>
                       {post.PublicRequest || post.PublicStatus ? (
                         <button className="btn btn-secondary" style={{ display: "none" }}></button>
                       ) : (
                         <button className="btn btn-danger" onClick={() => handleRequestPublic(post._id)}>
-                          Request Public
+                          Yêu cầu Public
                         </button>
                       )}
                     </div>
@@ -227,16 +225,15 @@ export default function Profile() {
                   </Link>
                   <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
                   <Link to={`/blogDetail/${post._id}`} className="readm">
-                    Read more...
+                    Đọc thêm ...
                   </Link>
                 </div>
               ))
             ) : (
-              <p>No posts available yet.</p>
-            )}
-
-          </div>
-        </div>
+              <p>Không có bài viết nào có sẵn.</p>
+            )}</div>
+  
+</div>
       </div>
     </div>
 
