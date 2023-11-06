@@ -10,7 +10,9 @@ export default function Profile() {
     avatar: "",
   });
   const [userPosts, setUserPosts] = useState([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const navigate = useNavigate();
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -33,6 +35,9 @@ export default function Profile() {
 
           // Lấy danh sách bài viết của người dùng sau khi lấy thông tin người dùng thành công
           fetchUserPosts(token);
+
+          // Lấy danh sách bài viết đã đánh dấu
+          fetchBookmarkedPosts(token);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -57,6 +62,26 @@ export default function Profile() {
       }
     };
 
+
+    const fetchBookmarkedPosts = async (token) => {
+      try {
+        if (token) {
+          const response = await axios.get("http://localhost:5000/blog/react", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const bookmarkedPostsData = response.data;
+          console.log("Bookmarked Posts:", bookmarkedPostsData)
+          setBookmarkedPosts(bookmarkedPostsData);
+          console.log(bookmarkedPostsData);
+        }
+      } catch (error) {
+        console.error("Error fetching bookmarked posts:", error);
+      }
+    };
+
     fetchUserData();
   }, []);
   function createMarkup(html) {
@@ -69,7 +94,7 @@ export default function Profile() {
       return text.slice(0, maxLength) + '...';
     }
   }
-  
+ 
 
   const handleRequestPublic = async (postId) => {
     try {
@@ -91,7 +116,7 @@ export default function Profile() {
             }
           );
 
-          // Cập nhật dữ liệu trên phía máy khách sau khi yêu cầu "Public"
+
           const updatedUserPosts = userPosts.map((post) => {
             if (post._id === postId) {
               return {
@@ -128,95 +153,93 @@ export default function Profile() {
         <div className="articles-toggle">
           <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li className="nav-item" role="presentation">
-              <button
-                className="nav-link active"
-                id="pills-home-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#pills-home"
-                type="button"
-                role="tab"
-                aria-controls="pills-home"
-                aria-selected="true"
-              >
-                Favorite Post
-              </button>
+            <button className="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Bookmarked Post</button>
             </li>
             <li className="nav-item" role="presentation">
-              <button
-                className="nav-link"
-                id="pills-profile-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#pills-profile"
-                type="button"
-                role="tab"
-                aria-controls="pills-profile"
-                aria-selected="false"
-              >
-                My Post
-              </button>
+            <button className="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">My Post</button>
             </li>
           </ul>
-          <div className="tab-content" id="pills-tabContent">
-            <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-              <div>
-                <div className="article-preview border-top border-bottom">
-                  <div className="artical-meta"></div>
-                </div>
-              </div>
-              <p>No articles are here... yet.</p>
-            </div>
-            <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-              {userPosts.length > 0 ? (
-                userPosts.map((post, index) => (
-                  <div key={index} className="article-preview border-top border-bottom">
-                    <div className="artical-meta">
-                      <div className="author">
-                        <img className="rounded-circle" src={user.avatar} alt="avatar" />
-                        <div className="info">
-                          <Link to="/profile">{user.username}</Link>
-                          <p>{post.createdAt}</p>
-                        </div>
-                        <div className="publicStatus">
-                          <p className={post.PublicStatus ? "true-text" : "false-text"}>
-                            Public Status: {post.PublicStatus ? "Public" : "Private"}
-                          </p>
-                        </div>
+          <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            {bookmarkedPosts && bookmarkedPosts.length > 0 ? (
+              bookmarkedPosts.map((post, index) => (
+                <div key={index} className="article-preview border-top border-bottom">
+                  <div className="artical-meta">
+                    <div className="author">
+                      <img className="rounded-circle" src={user.avatar} alt="avatar" />
+                      <div className="info">
+                        <Link to="/profile">{user.username}</Link>
+                        <p>{post.createdAt}</p>
                       </div>
-                      <div className="actions">
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => {
-                            handleOnClick(post._id);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        {post.PublicRequest || post.PublicStatus ? (
-                          <button className="btn btn-secondary" style={{ display: "none" }}></button>
-                        ) : (
-                          <button className="btn btn-danger" onClick={() => handleRequestPublic(post._id)}>
-                            Request Public
-                          </button>
-                        )}
+
+                    </div>
+
+                  </div>
+                  <Link to={`/blogDetail/${post._id}`} className="titles1">
+                    {post.Title}
+                  </Link>
+                  <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
+                  <Link to={`/blogDetail/${post._id}`} className="readm">
+                    Read more...
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>No favorite posts available yet.</p>
+            )}
+          </div>
+          <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            {userPosts.length > 0 ? (
+              userPosts.map((post, index) => (
+                <div key={index} className="article-preview border-top border-bottom">
+                  <div className="artical-meta">
+                    <div className="author">
+                      <img className="rounded-circle" src={user.avatar} alt="avatar" />
+                      <div className="info">
+                        <Link to="/profile">{user.username}</Link>
+                        <p>{post.createdAt}</p>
+                      </div>
+                      <div className="publicStatus">
+                        <p className={post.PublicStatus ? "true-text" : "false-text"}>
+                          Public Status: {post.PublicStatus ? "Public" : "Private"}
+                        </p>
                       </div>
                     </div>
-                    <Link to={`/blogDetail/${post._id}`} className="titles1">
-                      {post.Title}
-                    </Link>
-                    <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
-                    <Link to={`/blogDetail/${post._id}`} className="readm">
-                      Read more...
-                    </Link>
+                    <div className="actions">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          handleOnClick(post._id);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      {post.PublicRequest || post.PublicStatus ? (
+                        <button className="btn btn-secondary" style={{ display: "none" }}></button>
+                      ) : (
+                        <button className="btn btn-danger" onClick={() => handleRequestPublic(post._id)}>
+                          Request Public
+                        </button>
+                      )}
+                    </div>
                   </div>
-                ))
-              ) : (
-                <p>No posts available yet.</p>
-              )}
+                  <Link to={`/blogDetail/${post._id}`} className="titles1">
+                    {post.Title}
+                  </Link>
+                  <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
+                  <Link to={`/blogDetail/${post._id}`} className="readm">
+                    Read more...
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>No posts available yet.</p>
+            )}
 
-            </div>
           </div>
         </div>
       </div>
     </div>
+
   );
+
 }
