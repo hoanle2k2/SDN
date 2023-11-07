@@ -79,10 +79,6 @@ const HomePage = ({ search }) => {
 
   return (
     <div className="bg-white body">
-      {/* <div>
-                <p>Quang cao</p>
-            </div> */}
-
       <div className="content d-flex">
         <div className="aricle col-9">
           <div className="dropdown">
