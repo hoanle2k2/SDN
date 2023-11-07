@@ -1,75 +1,94 @@
-import React, { useEffect, useState } from "react";
-import "./profile.css";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import './profile.css';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Profile() {
-  const [user, setUser] = useState({
-    username: "",
-    email: "",
-    avatar: "",
-  });
+  const [user, setUser] = useState({ });
   const [userPosts, setUserPosts] = useState([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const navigate = useNavigate();
+
+  const fetchUserData = async () => {
+    console.log("fetch user")
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      if (token) {
+        const response = await axios.get("http://localhost:5000/users", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const userData = response.data.data;
+        console.log(userData)
+        setUser({
+          username: userData.username,
+          email: userData.email,
+          avatar: userData.avatar,
+        });
+
+        // Lấy danh sách bài viết của người dùng sau khi lấy thông tin người dùng thành công
+        fetchUserPosts(token);
+
+        // Lấy danh sách bài viết đã đánh dấu
+        fetchBookmarkedPosts(token);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const fetchUserPosts = async (token) => {
+    try {
+      if (token) {
+        const response = await axios.get("http://localhost:5000/blog/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const userPostsData = response.data.userBlogs;
+        setUserPosts(userPostsData);
+      }
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+    }
+  };
+
+  const fetchBookmarkedPosts = async (token) => {
+    try {
+      if (token) {
+        const response = await axios.get("http://localhost:5000/blog/react", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const bookmarkedPostsData = response.data;
+        setBookmarkedPosts(bookmarkedPostsData);
+      }
+    } catch (error) {
+      console.error("Error fetching bookmarked posts:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-
-        if (token) {
-          const response = await axios.get("http://localhost:5000/users", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const userData = response.data.data;
-          console.log("userdata", userData);
-          setUser({
-            username: userData.username,
-            email: userData.email,
-            avatar: userData.avatar,
-          });
-
-          // Lấy danh sách bài viết của người dùng sau khi lấy thông tin người dùng thành công
-          fetchUserPosts(token);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    const fetchUserPosts = async (token) => {
-      try {
-        if (token) {
-          const response = await axios.get("http://localhost:5000/blog/user", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const userPostsData = response.data.userBlogs;
-          setUserPosts(userPostsData);
-          console.log(userPostsData);
-        }
-      } catch (error) {
-        console.error("Error fetching user posts:", error);
-      }
-    };
-
     fetchUserData();
   }, []);
-  function createMarkup(html) {
+
+  const createMarkup = (html) => {
     return { __html: html };
-  }
-  function truncateText(text, maxLength) {
+  };
+
+  const truncateText = (text, maxLength) => {
     if (text.length <= maxLength) {
       return text;
     } else {
       return text.slice(0, maxLength) + '...';
     }
-  }
-  
+  };
 
   const handleRequestPublic = async (postId) => {
     try {
@@ -91,7 +110,6 @@ export default function Profile() {
             }
           );
 
-          // Cập nhật dữ liệu trên phía máy khách sau khi yêu cầu "Public"
           const updatedUserPosts = userPosts.map((post) => {
             if (post._id === postId) {
               return {
@@ -109,6 +127,7 @@ export default function Profile() {
       console.error("Error requesting public:", error);
     }
   };
+
   const handleOnClick = (id) => {
     navigate(`/updateBlog/${id}`);
   };
@@ -121,99 +140,92 @@ export default function Profile() {
             <img src={user.avatar} alt="" />
             <h4>{user.username}</h4>
             <Link to="/setting">
-              <i className="fa fa-cog"></i> Edit Profile Settings
+              <i className="fa fa-cog"></i> Chỉnh sửa người dùng
             </Link>
           </div>
         </div>
-        <div className="articles-toggle">
-          <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-            <li className="nav-item" role="presentation">
-              <button
-                className="nav-link active"
-                id="pills-home-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#pills-home"
-                type="button"
-                role="tab"
-                aria-controls="pills-home"
-                aria-selected="true"
-              >
-                Favorite Post
-              </button>
-            </li>
-            <li className="nav-item" role="presentation">
-              <button
-                className="nav-link"
-                id="pills-profile-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#pills-profile"
-                type="button"
-                role="tab"
-                aria-controls="pills-profile"
-                aria-selected="false"
-              >
-                My Post
-              </button>
-            </li>
-          </ul>
-          <div className="tab-content" id="pills-tabContent">
-            <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-              <div>
-                <div className="article-preview border-top border-bottom">
-                  <div className="artical-meta"></div>
-                </div>
-              </div>
-              <p>No articles are here... yet.</p>
-            </div>
-            <div className="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-              {userPosts.length > 0 ? (
-                userPosts.map((post, index) => (
-                  <div key={index} className="article-preview border-top border-bottom">
-                    <div className="artical-meta">
-                      <div className="author">
-                        <img className="rounded-circle" src={user.avatar} alt="avatar" />
-                        <div className="info">
-                          <Link to="/profile">{user.username}</Link>
-                          <p>{post.createdAt}</p>
-                        </div>
-                        <div className="publicStatus">
-                          <p className={post.PublicStatus ? "true-text" : "false-text"}>
-                            Public Status: {post.PublicStatus ? "Public" : "Private"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="actions">
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => {
-                            handleOnClick(post._id);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        {post.PublicRequest || post.PublicStatus ? (
-                          <button className="btn btn-secondary" style={{ display: "none" }}></button>
-                        ) : (
-                          <button className="btn btn-danger" onClick={() => handleRequestPublic(post._id)}>
-                            Request Public
-                          </button>
-                        )}
+        <ul className="nav nav-tabs" id="myTab" role="tablist">
+          <li className="nav-item">
+            <a className="nav-link active nav-pills1" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Bài Viết Bookmark</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Bài viết của tôi</a>
+          </li>
+        </ul>
+        <div className="tab-content" id="myTabContent">
+          <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            {bookmarkedPosts && bookmarkedPosts.length > 0 ? (
+              bookmarkedPosts.map((post, index) => (
+                <div key={index} className="article-preview border-top border-bottom">
+                  <div className="artical-meta">
+                    <div className="author">
+                      <img className="rounded-circle" src={user.avatar} alt="avatar" />
+                      <div className="info">
+                        <Link to="/profile">{user.username}</Link>
+                        <p>{post.createdAt}</p>
                       </div>
                     </div>
-                    <Link to={`/blogDetail/${post._id}`} className="titles1">
-                      {post.Title}
-                    </Link>
-                    <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
-                    <Link to={`/blogDetail/${post._id}`} className="readm">
-                      Read more...
-                    </Link>
                   </div>
-                ))
-              ) : (
-                <p>No posts available yet.</p>
-              )}
-
-            </div>
+                  <Link to={`/blogDetail/${post._id}`} className="titles1">
+                    {post.Title}
+                  </Link>
+                  <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
+                  <Link to={`/blogDetail/${post._id}`} className="readm">
+                    Đọc thêm.
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>Không có bài viết nào có sẵn.</p>
+            )}
+          </div>
+          <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            {userPosts.length > 0 ? (
+              userPosts.map((post, index) => (
+                <div key={index} className="article-preview border-top border-bottom">
+                  <div className="artical-meta">
+                    <div className="author">
+                      <img className="rounded-circle" src={user.avatar} alt="avatar" />
+                      <div className="info">
+                        <Link to="/profile">{user.username}</Link>
+                        <p>{post.createdAt}</p>
+                      </div>
+                      <div className="publicStatus">
+                        <p className={post.PublicStatus ? "true-text" : "false-text"}>
+                          Trạng Thái Public: {post.PublicStatus ? "Public" : "Private"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="actions">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          handleOnClick(post._id);
+                        }}
+                      >
+                        Sửa
+                      </button>
+                      {post.PublicRequest || post.PublicStatus ? (
+                        <button className="btn btn-secondary" style={{ display: "none" }}></button>
+                      ) : (
+                        <button className="btn btn-danger" onClick={() => handleRequestPublic(post._id)}>
+                          Yêu cầu Public
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <Link to={`/blogDetail/${post._id}`} className="titles1">
+                    {post.Title}
+                  </Link>
+                  <div className="article-description" dangerouslySetInnerHTML={createMarkup(truncateText(post.Content, 20))} />
+                  <Link to={`/blogDetail/${post._id}`} className="readm">
+                    Đọc thêm ...
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <p>Không có bài viết nào có sẵn.</p>
+            )}
           </div>
         </div>
       </div>
