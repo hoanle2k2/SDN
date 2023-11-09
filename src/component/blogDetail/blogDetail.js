@@ -6,7 +6,6 @@ import "./BlogDetail.css";
 import { toast } from "react-toastify";
 
 import { io } from "socket.io-client";
-import { Toast } from "bootstrap";
 
 export default function BlogDetail() {
   const navigate = useNavigate();
@@ -14,12 +13,12 @@ export default function BlogDetail() {
   const [blogDetailState, setBlogDetailState] = useState();
   const [bookmark, setBookmark] = useState(false);
   const [fav, setFavorite] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
 
   const [fatherCommentID, setFatherCommentID] = useState("");
   const [commentAnswerTo, setCommentAnswerTo] = useState([]);
   const [comments, setComments] = useState([]);
+  const [commentMenuID, setCommentMenuID] = useState("");
 
   var alertStatus = false;
   const token = localStorage.getItem("accessToken");
@@ -29,30 +28,36 @@ export default function BlogDetail() {
 
   const [showAllowPublicButton, setShowAllowPublicButton] = useState(false);
   const commentRef = useRef();
+  const afterDefineMenuOfComment = "menuComment";
+  const afterDefineMenuOfDelete = "menuCommentDelete";
 
   const socket = io("http://localhost:5001/");
   socket.on("response", (message) => {
     const result = JSON.parse(message);
     if (result.status === 500) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("Role");
-      localStorage.removeItem("name");
-      toast.success("Please Login");
+      toast.error(result.message);
       navigate("/");
       return;
     }
     const newComment = result.message;
-    var commentList = comments;
-    const searchComment = commentList.find((c) => c._id === newComment._id);
-
-    if (newComment.fatherComment === "" && !searchComment) {
-      newComment.fatherComment=[];
-      commentList.push(newComment);
+    console.log(newComment);
+    if (blogid !== newComment.blogID) {
+      return;
     }
-    if (searchComment) {
+    var commentList = comments;
+    if (newComment.fatherComment === "") {
+      newComment.fatherComment = [];
+      const find = commentList.find((c) => c._id === newComment._id);
+      if (!find) {
+        commentList.push(newComment);
+      }
+    } else {
       commentList = commentList.map((c) => {
-        if (c._id === newComment._id) {
-          c.fatherComment.push(newComment);
+        if (c._id === newComment.fatherComment) {
+          const find = c.fatherComment.find((child) => child._id === newComment._id);
+          if (!find) {
+            c.fatherComment.push(newComment);
+          }
         }
         return c;
       });
@@ -61,12 +66,46 @@ export default function BlogDetail() {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
     setComments((pre) => [...commentList]);
-    console.log(comments);
+    setFatherCommentID("");
+    setShowReplyInput(false);
+    setCommentAnswerTo("");
+  });
+  socket.on("delete_response", (message) => {
+    const result = JSON.parse(message);
+    if (result.status === 500) {
+      toast.error(result.message);
+      navigate("/");
+      return;
+    }
+    console.log(result);
+    var commentList = comments;
+    console.log(commentList);
+    const commentID = result.message;
+    console.log(commentID);
+    if (result.fatherComment === "") {
+      const targetIndex = commentList.findIndex((c) => c._id === commentID);
+      if (targetIndex !== -1) {
+        commentList.splice(targetIndex, 1);
+      }
+    } else {
+      commentList = commentList.map((c) => {
+        if ((c.id = c.fatherComment)) {
+          const targetIndex = c.fatherComment.findIndex((c) => c._id === commentID);
+          if (targetIndex !== -1) {
+            c.fatherComment.splice(targetIndex, 1);
+          }
+        }
+        return c;
+      });
+    }
+    setComments((pre) => [...commentList]);
+    setCommentMenuID("");
   });
   useEffect(() => {
     alertStatus = true;
     setShowReplyInput(false);
     setIsLoading(true);
+    setCommentMenuID("");
     console.log("blogid", blogid);
     axios
       .get(`/blog/blogDetail/${blogid}`, {
@@ -76,6 +115,7 @@ export default function BlogDetail() {
       })
       .then((res) => {
         setBlogDetailState(res?.data?.blogDetail);
+        console.log(res?.data);
         setFavorite(res?.data?.favOfUser);
         setBookmark(res?.data?.bookMarkOfUser);
 
@@ -140,7 +180,7 @@ export default function BlogDetail() {
   };
 
   const reactBlog = (blogid, type, status) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(env.token);
     if (!token) {
       toast.error("Please login into system");
       return;
@@ -174,6 +214,7 @@ export default function BlogDetail() {
   };
   const handleCommentInput = (commentFatherID) => {
     const comment = commentRef.current.value;
+    commentRef.current.value = "";
     if (!token) {
       toast.error("please login to comment");
       return;
@@ -195,6 +236,9 @@ export default function BlogDetail() {
     }
   };
   const showAnwerForm = (commentFatherID, answerCommentID) => {
+    if (!token) {
+      toast.error("Please login");
+    }
     if (showReplyInput) {
       setShowReplyInput(false);
       return;
@@ -215,32 +259,55 @@ export default function BlogDetail() {
     }
     setShowReplyInput(true);
   };
-  // Hàm để hiển thị menu tùy chọn khi nhấp vào biểu tượng ba chấm
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
+
+  const toggleOptions = (menuElementID, userID) => {
+    if (!token) {
+      toast.error("Please login");
+    }
+    const userIDLocal = localStorage.getItem("userID");
+    var menu = document.getElementById(menuElementID + afterDefineMenuOfComment);
+    var deleteButton = document.getElementById(menuElementID + afterDefineMenuOfDelete);
+    if (deleteButton === undefined || menu === undefined) {
+      return;
+    }
+    if (userID === userIDLocal) {
+      deleteButton.style.display = "block";
+    } else {
+      deleteButton.style.display = "none";
+    }
+    if (commentMenuID === "") {
+      setCommentMenuID(menuElementID);
+      menu.style.display = "block";
+      return;
+    }
+
+    if (menuElementID === commentMenuID) {
+      menu.style.display = "none";
+      setCommentMenuID("");
+    } else {
+      // document.getElementById(commentMenuID + afterDefineMenuOfComment).style.display = "none";
+      setCommentMenuID(menuElementID);
+      menu.style.display = "block";
+    }
   };
 
   // Hàm xử lý khi nhấp vào "Xóa bình luận"
-  const deleteComment = () => {
-    // Thực hiện logic xóa bình luận ở đây
-    toast.error("Bình luận đã bị xóa.");
-    // Đóng menu tùy chọn sau khi thực hiện xong
-    setShowOptions(false);
+  const deleteComment = (commentID) => {
+    console.log(commentID);
+    socket.emit("delete_message", JSON.stringify({ token: token, commentID: commentID }));
   };
 
   // Hàm xử lý khi nhấp vào "Báo cáo"
   const reportComment = () => {
     // Thực hiện logic báo cáo bình luận ở đây
     toast.error("Bình luận đã được báo cáo.");
-    // Đóng menu tùy chọn sau khi thực hiện xong
-    setShowOptions(false);
   };
 
   return (
     <div className="container-fluid row mb-5">
       <div className="col-1"></div>
       <div className="col-11">
-        <div className="blog-detail row mt-3 d-flex align-items-center">
+        <div className="blog-infor row mt-3 ">
           <div className="blog_detail">
             <h1 className="blog__title">{blogDetailState?.Title}</h1>
             {showAllowPublicButton && (
@@ -252,7 +319,7 @@ export default function BlogDetail() {
           <div>
             <div className="blog__topic ">{blogDetailState?.topic?.TopicName}</div>
           </div>
-          <div className="author-info col-6 d-flex align-items-center">
+          <div className="author-info col-sm-6 d-flex align-items-center">
             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Author Avatar" className="avatar" />
             <div className="author-name ml-3">
               <p>UserName</p>
@@ -261,7 +328,7 @@ export default function BlogDetail() {
               </span>
             </div>
           </div>
-          <div className="blog-meta col-6 ">
+          <div className="blog-meta col-sm-6 ">
             <p>Đã đăng vào {blogDetailState?.createdAt}</p>
             <div className="blog_view">
               <p>
@@ -277,7 +344,7 @@ export default function BlogDetail() {
           </div>
         </div>
         <div className="blog__content row">
-          <div className="blogdetail-option col-1">
+          <div className="blogdetail-option col-sm-1">
             {!showAllowPublicButton && (
               <div className="option-column">
                 <div className="answerTo"></div>
@@ -315,7 +382,7 @@ export default function BlogDetail() {
               </div>
             )}
           </div>
-          <div className="col-11">{blogDetailState?.Content}</div>
+          <div className="col-sm-11">{blogDetailState?.Content}</div>
         </div>
         {!showAllowPublicButton && (
           <div className="blog__comment">
@@ -384,7 +451,7 @@ export default function BlogDetail() {
             )}
 
             {comments.length > 0 ? (
-              <div className="commentReviewScroll">
+              <div className="commentReviewScroll mt-2">
                 {comments.map((c) => {
                   return (
                     <div className="commentUser" key={c._id}>
@@ -404,13 +471,17 @@ export default function BlogDetail() {
                           </div>
                         </div>
                         <div className="commentAction d-flex">
-                          <i className="bi bi-grip-horizontal" onClick={toggleOptions}></i>
-                          {showOptions && (
-                            <div className="commentOptions">
-                              <div onClick={deleteComment}>Xóa bình luận</div>
-                              <div onClick={reportComment}>Báo cáo</div>
+                          <i className="bi bi-grip-horizontal me-3" onClick={() => toggleOptions(c._id, c.userID)}></i>
+                          <div className="commentOptions" id={c._id + afterDefineMenuOfComment}>
+                            <div
+                              id={c._id + afterDefineMenuOfDelete}
+                              className="deleteOption"
+                              onClick={() => deleteComment(c._id)}
+                            >
+                              Xóa bình luận
                             </div>
-                          )}
+                            <div onClick={reportComment}>Báo cáo</div>
+                          </div>
                         </div>
                       </div>
                       <div className="commentU">
@@ -440,13 +511,20 @@ export default function BlogDetail() {
                                         </div>
                                       </div>
                                       <div className="commentAction d-flex">
-                                        <i className="bi bi-grip-horizontal" onClick={toggleOptions}></i>
-                                        {showOptions && (
-                                          <div className="commentOptions">
-                                            <div onClick={deleteComment}>Xóa bình luận</div>
-                                            <div onClick={reportComment}>Báo cáo</div>
+                                        <i
+                                          className="bi bi-grip-horizontal me-3"
+                                          onClick={() => toggleOptions(childC._id, childC.userID)}
+                                        ></i>
+                                        <div className="commentOptions" id={childC._id + afterDefineMenuOfComment}>
+                                          <div
+                                            id={childC._id + afterDefineMenuOfDelete}
+                                            className="deleteOption"
+                                            onClick={() => deleteComment(childC._id)}
+                                          >
+                                            Xóa bình luận
                                           </div>
-                                        )}
+                                          <div onClick={reportComment}>Báo cáo</div>
+                                        </div>
                                       </div>
                                     </div>
                                     <div className="mt-2 col-11 commentContent">{childC.comment}</div>
