@@ -1,9 +1,11 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import env from "../../staticEnvVar";
 import "./BlogDetail.css";
 import { toast } from "react-toastify";
+
+import { io } from "socket.io-client";
 
 export default function BlogDetail() {
   const navigate = useNavigate();
@@ -11,8 +13,13 @@ export default function BlogDetail() {
   const [blogDetailState, setBlogDetailState] = useState();
   const [bookmark, setBookmark] = useState(false);
   const [fav, setFavorite] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
+
+  const [fatherCommentID, setFatherCommentID] = useState("");
+  const [commentAnswerTo, setCommentAnswerTo] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [commentMenuID, setCommentMenuID] = useState("");
+
   var alertStatus = false;
   const token = localStorage.getItem("accessToken");
   const role = localStorage.getItem("Role");
@@ -20,32 +27,128 @@ export default function BlogDetail() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [showAllowPublicButton, setShowAllowPublicButton] = useState(false);
+  const commentRef = useRef();
+  const afterDefineMenuOfComment = "menuComment";
+  const afterDefineMenuOfDelete = "menuCommentDelete";
 
+  const socket = io("http://localhost:5001/");
+  socket.on("response", (message) => {
+    const result = JSON.parse(message);
+    if (result.status === 500) {
+      toast.error(result.message);
+      navigate("/");
+      return;
+    }
+    const newComment = result.message;
+    console.log(newComment);
+    if (blogid !== newComment.blogID) {
+      return;
+    }
+    var commentList = comments;
+    if (newComment.fatherComment === "") {
+      newComment.fatherComment = [];
+      const find = commentList.find((c) => c._id === newComment._id);
+      if (!find) {
+        commentList.push(newComment);
+      }
+    } else {
+      commentList = commentList.map((c) => {
+        if (c._id === newComment.fatherComment) {
+          const find = c.fatherComment.find((child) => child._id === newComment._id);
+          if (!find) {
+            c.fatherComment.push(newComment);
+          }
+        }
+        return c;
+      });
+    }
+    commentList.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    setComments((pre) => [...commentList]);
+    setFatherCommentID("");
+    setShowReplyInput(false);
+    setCommentAnswerTo("");
+  });
+  socket.on("delete_response", (message) => {
+    const result = JSON.parse(message);
+    if (result.status === 500) {
+      toast.error(result.message);
+      navigate("/");
+      return;
+    }
+    console.log(result);
+    var commentList = comments;
+    console.log(commentList);
+    const commentID = result.message;
+    console.log(commentID);
+    if (result.fatherComment === "") {
+      const targetIndex = commentList.findIndex((c) => c._id === commentID);
+      if (targetIndex !== -1) {
+        commentList.splice(targetIndex, 1);
+      }
+    } else {
+      commentList = commentList.map((c) => {
+        if ((c.id = c.fatherComment)) {
+          const targetIndex = c.fatherComment.findIndex((c) => c._id === commentID);
+          if (targetIndex !== -1) {
+            c.fatherComment.splice(targetIndex, 1);
+          }
+        }
+        return c;
+      });
+    }
+    setComments((pre) => [...commentList]);
+    setCommentMenuID("");
+  });
   useEffect(() => {
     alertStatus = true;
+    setShowReplyInput(false);
     setIsLoading(true);
+    setCommentMenuID("");
     console.log("blogid", blogid);
     axios
-      .get(`/blog/${blogid}`, {
+      .get(`/blog/blogDetail/${blogid}`, {
         headers: {
           authorization: `token ${token}`,
         },
       })
       .then((res) => {
         setBlogDetailState(res?.data?.blogDetail);
+        console.log(res?.data);
         setFavorite(res?.data?.favOfUser);
         setBookmark(res?.data?.bookMarkOfUser);
 
         if (role === "CONTENT_MANAGER" && res?.data?.blogDetail?.PublicStatus === false) {
           setShowAllowPublicButton(true);
         }
-        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
         if (alertStatus) {
           alertStatus = false;
-          alert("Error: " + err.response.data.message);
+          toast.error("Error: " + err.response.data.message);
+        }
+        navigate("/");
+      });
+    axios
+      .get(`/blog/blogDetail/${blogid}/comments`, {
+        headers: {
+          authorization: `token ${token}`,
+        },
+      })
+      .then((res) => {
+        const com = res.data.response.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        setComments((pre) => com);
+        setIsLoading((pre) => false);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (alertStatus) {
+          alertStatus = false;
+          toast.error("Error: " + err.response.data.message);
         }
         navigate("/");
       });
@@ -77,6 +180,11 @@ export default function BlogDetail() {
   };
 
   const reactBlog = (blogid, type, status) => {
+    const token = localStorage.getItem(env.token);
+    if (!token) {
+      toast.error("Please login into system");
+      return;
+    }
     axios
       .post(
         `/blog/react`,
@@ -104,38 +212,102 @@ export default function BlogDetail() {
         console.error("Lỗi khi public bài viết:", err);
       });
   };
-
-  // Hàm để hiển thị menu tùy chọn khi nhấp vào biểu tượng ba chấm
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
+  const handleCommentInput = (commentFatherID) => {
+    const comment = commentRef.current.value;
+    commentRef.current.value = "";
+    if (!token) {
+      toast.error("please login to comment");
+      return;
+    }
+    if (comment === "") {
+      toast.error("Comment must greater than 2 characters");
+      return;
+    }
+    if (!commentFatherID) {
+      socket.emit(
+        "send_message",
+        JSON.stringify({ message: comment, token: token, blogid: blogid, commentFatherId: "" })
+      );
+    } else {
+      socket.emit(
+        "send_message",
+        JSON.stringify({ message: comment, token: token, blogid: blogid, commentFatherId: commentFatherID })
+      );
+    }
+  };
+  const showAnwerForm = (commentFatherID, answerCommentID) => {
+    if (!token) {
+      toast.error("Please login");
+    }
+    if (showReplyInput) {
+      setShowReplyInput(false);
+      return;
+    }
+    if (commentFatherID) {
+      setFatherCommentID(commentFatherID);
+      var answerTo = comments.find((c) => c._id === answerCommentID);
+      if (commentFatherID !== answerCommentID) {
+        answerTo = comments.find((c) => c._id === commentFatherID).fatherComment.find((c) => c._id === answerCommentID);
+      } else {
+        answerTo = comments.find((c) => c._id === answerCommentID);
+      }
+      setCommentAnswerTo(answerTo);
+    } else {
+      setFatherCommentID("");
+      setShowReplyInput(false);
+      setCommentAnswerTo("");
+    }
+    setShowReplyInput(true);
   };
 
-  // Hàm để hiển thị input trả lời khi nhấn vào "Trả lời"
-  const toggleReplyInput = () => {
-    setShowReplyInput(!showReplyInput);
+  const toggleOptions = (menuElementID, userID) => {
+    if (!token) {
+      toast.error("Please login");
+    }
+    const userIDLocal = localStorage.getItem("userID");
+    var menu = document.getElementById(menuElementID + afterDefineMenuOfComment);
+    var deleteButton = document.getElementById(menuElementID + afterDefineMenuOfDelete);
+    if (deleteButton === undefined || menu === undefined) {
+      return;
+    }
+    if (userID === userIDLocal) {
+      deleteButton.style.display = "block";
+    } else {
+      deleteButton.style.display = "none";
+    }
+    if (commentMenuID === "") {
+      setCommentMenuID(menuElementID);
+      menu.style.display = "block";
+      return;
+    }
+
+    if (menuElementID === commentMenuID) {
+      menu.style.display = "none";
+      setCommentMenuID("");
+    } else {
+      // document.getElementById(commentMenuID + afterDefineMenuOfComment).style.display = "none";
+      setCommentMenuID(menuElementID);
+      menu.style.display = "block";
+    }
   };
 
   // Hàm xử lý khi nhấp vào "Xóa bình luận"
-  const deleteComment = () => {
-    // Thực hiện logic xóa bình luận ở đây
-    alert("Bình luận đã bị xóa.");
-    // Đóng menu tùy chọn sau khi thực hiện xong
-    setShowOptions(false);
+  const deleteComment = (commentID) => {
+    console.log(commentID);
+    socket.emit("delete_message", JSON.stringify({ token: token, commentID: commentID }));
   };
 
   // Hàm xử lý khi nhấp vào "Báo cáo"
   const reportComment = () => {
     // Thực hiện logic báo cáo bình luận ở đây
-    alert("Bình luận đã được báo cáo.");
-    // Đóng menu tùy chọn sau khi thực hiện xong
-    setShowOptions(false);
+    toast.error("Bình luận đã được báo cáo.");
   };
 
   return (
-    <div className="container-fluid row">
+    <div className="container-fluid row mb-5">
       <div className="col-1"></div>
       <div className="col-11">
-        <div className="blog-detail row mt-3 d-flex align-items-center">
+        <div className="blog-infor row mt-3 ">
           <div className="blog_detail">
             <h1 className="blog__title">{blogDetailState?.Title}</h1>
             {showAllowPublicButton && (
@@ -147,7 +319,7 @@ export default function BlogDetail() {
           <div>
             <div className="blog__topic ">{blogDetailState?.topic?.TopicName}</div>
           </div>
-          <div className="author-info col-6 d-flex align-items-center">
+          <div className="author-info col-sm-6 d-flex align-items-center">
             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Author Avatar" className="avatar" />
             <div className="author-name ml-3">
               <p>UserName</p>
@@ -156,25 +328,26 @@ export default function BlogDetail() {
               </span>
             </div>
           </div>
-          <div className="blog-meta col-6 ">
+          <div className="blog-meta col-sm-6 ">
             <p>Đã đăng vào {blogDetailState?.createdAt}</p>
             <div className="blog_view">
               <p>
                 <i className="bi bi-heart-fill"></i> {blogDetailState?.numberOfFav} yêu thích
               </p>
               <p>
-                <i className="bi bi-chat-left-text"></i> {blogDetailState?.numberOfBookmark} bình luận
+                <i className="bi bi-chat-left-text"></i> {blogDetailState?.numberOfComments} bình luận
               </p>
               <p>
-                <i className="bi bi-bookmark"></i> {blogDetailState?.numberOfComments} lượt lưu
+                <i className="bi bi-bookmark"></i> {blogDetailState?.numberOfBookmark} lượt lưu
               </p>
             </div>
           </div>
         </div>
         <div className="blog__content row">
-          <div className="blogdetail-option col-1">
+          <div className="blogdetail-option col-sm-1">
             {!showAllowPublicButton && (
               <div className="option-column">
+                <div className="answerTo"></div>
                 <div className="d-flex justify-content-center">
                   {fav ? (
                     <div>
@@ -209,61 +382,171 @@ export default function BlogDetail() {
               </div>
             )}
           </div>
-          <div className="col-11">{blogDetailState?.Content}</div>
+          <div className="col-sm-11">{blogDetailState?.Content}</div>
         </div>
         {!showAllowPublicButton && (
           <div className="blog__comment">
-            <h1>Bình luận</h1>
-            <div className="avt__author">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                alt="Author Avatar"
-                className="avatar__comment"
-              />
+            <div className="avt__author d-flex align-middle">
+              <div>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                  alt="Author Avatar"
+                  className="avatar__comment"
+                />
+              </div>
+              <div className="ms-2">
+                <h1>Bình luận</h1>
+              </div>
             </div>
-            <input className="mt-1" type="area" placeholder="Viết bình luận" />
-            <div className="btn_submit">
-              <button className="btncmt">Bình luận</button>
-            </div>
-            <div className="commentUser">
-              <div className="row">
-                <div className="user_infor col-6 d-flex align-items-center">
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                    alt="User Avatar"
-                    className="avatarUser"
-                  />
-                  <div className="userName">
-                    <p>Username</p>
-                    <span>24/4//2023 9:00 Sa</span>
+            {showReplyInput ? (
+              <div>
+                <div className="answerToOnReplyForm">
+                  <div>Trả lời bình luận:</div>
+                  <div className="answerToOnReply">
+                    <div className="user_infor d-flex align-items-center">
+                      <div>
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                          alt="User Avatar"
+                          className="avatarUser"
+                        />
+                      </div>
+
+                      <div className="">
+                        <div>{commentAnswerTo?.user?.usename}</div>
+                        <div>{commentAnswerTo?.createdAt}</div>
+                      </div>
+                    </div>
+                    <div className="commentAction ">
+                      <div className="mt-2 col-11 commentContent">{commentAnswerTo.comment}</div>
+                    </div>
                   </div>
                 </div>
-                <div className="commentAction col-6">
-                  <i className="fa fa-ellipsis-h" onClick={toggleOptions}></i>
-                  {showOptions && (
-                    <div className="commentOptions">
-                      <p onClick={deleteComment}>Xóa bình luận</p>
-                      <p onClick={reportComment}>Báo cáo</p>
-                    </div>
-                  )}
+                <div className="d-flex align-items-center mt-2">
+                  <input
+                    className="mt-1 w-50 pt-1 ps-1 mt-1 mb-2 pb-3 me-3"
+                    type="area"
+                    ref={commentRef}
+                    placeholder="Viết Trả lời"
+                  />
+                  <div className="btn btn-success" onClick={() => handleCommentInput(fatherCommentID)}>
+                    <div>Trả lời</div>
+                  </div>
                 </div>
               </div>
-              <div className="commentU">
-                <p>
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam dolorem libero debitis tempora vel
-                  sunt natus quidem officiis architecto ipsum hic quasi consectetur quaerat optio, atque dicta ipsa
-                  laboriosam labore ea nostrum laudantium ut. Similique voluptatibus sed est earum! Voluptatum!
-                </p>
-                <div className="reply-btn" onClick={toggleReplyInput}>
-                  <p>Trả lời</p>
-                  {showReplyInput && (
-                    <div className="reply-section">
-                      <input type="text" placeholder="Viết trả lời" />
-                    </div>
-                  )}
+            ) : (
+              <div className="d-flex align-items-center mt-2">
+                <input
+                  className="mt-1 w-50 pt-1 ps-1 mt-1 mb-2 pb-3 me-3"
+                  type="area"
+                  ref={commentRef}
+                  placeholder="Viết bình luận"
+                />
+                <div className="">
+                  <button className="btn btn-success" onClick={() => handleCommentInput(null)}>
+                    Bình luận
+                  </button>
                 </div>
               </div>
-            </div>
+            )}
+
+            {comments.length > 0 ? (
+              <div className="commentReviewScroll mt-2">
+                {comments.map((c) => {
+                  return (
+                    <div className="commentUser" key={c._id}>
+                      <div className="d-flex justify-content-between w-75 ">
+                        <div className="user_infor d-flex align-items-center">
+                          <div>
+                            <img
+                              src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                              alt="User Avatar"
+                              className="avatarUser"
+                            />
+                          </div>
+
+                          <div className="">
+                            <div>{c?.user?.usename}</div>
+                            <div>{c.createdAt}</div>
+                          </div>
+                        </div>
+                        <div className="commentAction d-flex">
+                          <i className="bi bi-grip-horizontal me-3" onClick={() => toggleOptions(c._id, c.userID)}></i>
+                          <div className="commentOptions" id={c._id + afterDefineMenuOfComment}>
+                            <div
+                              id={c._id + afterDefineMenuOfDelete}
+                              className="deleteOption"
+                              onClick={() => deleteComment(c._id)}
+                            >
+                              Xóa bình luận
+                            </div>
+                            <div onClick={reportComment}>Báo cáo</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="commentU">
+                        <div className="mt-2 col-11 commentContent">{c.comment}</div>
+                        <div className="d-flex">
+                          <div onClick={() => showAnwerForm(c._id, c._id)}>Trả lời</div>
+                        </div>
+                        <div className="commentAnswers ps-5">
+                          {c.fatherComment.length > 0 ? (
+                            <div>
+                              {c.fatherComment.map((childC) => {
+                                return (
+                                  <div>
+                                    <div className="d-flex justify-content-between w-75 ">
+                                      <div className="user_infor d-flex align-items-center">
+                                        <div>
+                                          <img
+                                            src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                            alt="User Avatar"
+                                            className="avatarUser"
+                                          />
+                                        </div>
+
+                                        <div className="">
+                                          <div>{childC?.user?.usename}</div>
+                                          <div>{childC?.createdAt}</div>
+                                        </div>
+                                      </div>
+                                      <div className="commentAction d-flex">
+                                        <i
+                                          className="bi bi-grip-horizontal me-3"
+                                          onClick={() => toggleOptions(childC._id, childC.userID)}
+                                        ></i>
+                                        <div className="commentOptions" id={childC._id + afterDefineMenuOfComment}>
+                                          <div
+                                            id={childC._id + afterDefineMenuOfDelete}
+                                            className="deleteOption"
+                                            onClick={() => deleteComment(childC._id)}
+                                          >
+                                            Xóa bình luận
+                                          </div>
+                                          <div onClick={reportComment}>Báo cáo</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="mt-2 col-11 commentContent">{childC.comment}</div>
+                                    <div className="d-flex">
+                                      <div onClick={() => showAnwerForm(c._id, childC._id)}>Trả lời</div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <div></div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
         )}
       </div>

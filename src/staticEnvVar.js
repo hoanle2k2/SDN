@@ -9,6 +9,7 @@ const env = {
     bookmark: "BOOKMARK",
     report: "REPORT",
   },
-  limit_per_page:10
+  limit_per_page: 10,
+  token: "accessToken",
 };
 export default env;

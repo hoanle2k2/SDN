@@ -60,21 +60,22 @@
   font-size: 30px;
 }
 
-.blog__comment input {
-  margin-top: 20px;
-  padding: 5px 5px 80px;
-  width: 60%;
-  margin-bottom: 20px;
-}
-
-.btncmt {
-  padding: 10px;
-  font-size: 16px;
-  background-color: #9595f8;
+.commentOptions {
+  border: 1px solid gray;
+  padding: 0.4rem 0.8rem;
   border-radius: 10px;
-  color: white;
+  display: none;
+} 
+.commentOptions .deleteOption{
+  display: none;
 }
-
+.commentOptions div {
+  padding: 2px;
+}
+.commentOptions div:hover {
+  background-color: rgb(199, 197, 197);
+  border-radius: 10px;
+}
 .avatarUser {
   width: 35px;
 }
@@ -85,10 +86,6 @@
 
 .commentUser img {
   margin-right: 1rem;
-}
-
-.commentU {
-  width: 50%;
 }
 
 #myButton {
@@ -119,6 +116,60 @@
   padding: 0.5rem 1rem;
   border-radius: 0.3rem;
   color: #fff;
-  background-color: #5CB85C;
-  border-color: #5CB85C;
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+}
+.blog-infor {
+  display: flex;
+  align-items: center;
+}
+.commentReviewScroll {
+  overflow: scroll;
+  overflow-x: hidden;
+  height: 38rem;
+  width: 70%;
+  border-radius: 10px;
+  border: 1px solid gray;
+  padding-left: 1rem;
+  background-color: rgba(243, 243, 243, 0.564);
+}
+@media screen and (max-width: 1024px) {
+  .commentReviewScroll {
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 38rem;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding-left: 1rem;
+    background-color: rgba(243, 243, 243, 0.564);
+  }
+  .blog-infor {
+    display: block;
+  }
+  .blogdetail-option .option-column {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    padding: 1rem 0;
+    background-color: rgb(229, 229, 229);
+  }
+}
+.commentU .commentContent {
+  border-radius: 10px;
+  border: 1px solid gray;
+  padding: 0.5rem;
+  background-color: beige;
+  white-space: break-spaces;
+}
+.answerToOnReplyForm {
+  padding: 0.5rem;
+  border-radius: 10px;
+  width: 50%;
+  background-color: bisque;
+}
+.answerToOnReply {
+  padding: 0.3rem;
+  border-radius: 10px;
+  background-color: rgb(253, 212, 161);
 }
